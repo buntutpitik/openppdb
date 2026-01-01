@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Rekap Daftar Ulang - Bendahara PPDB SMK</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: #f4f6f9; }
+        .total-box { font-size: 1.5rem; font-weight: bold; color: #28a745; }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white text-center">
+                <h3>REKAP DAFTAR ULANG & PEMBAYARAN</h3>
+                <p>PPDB SMK - Tahun Ajaran 2026/2027</p>
+                <a href="{% url 'dashboard_bendahara' %}" class="btn btn-light btn-sm">← Kembali ke Dashboard</a>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-success text-center">
+                    <p>Jumlah Siswa Daftar Ulang: <strong>{{ jumlah }}</strong> orang</p>
+                    <p class="total-box">Total Uang Masuk: Rp {{ total_pembayaran }}</p>
+                </div>
+
+                <h4 class="mb-3">Detail Pendaftar Daftar Ulang</h4>
+                                <div class="text-end mb-3">
+                    <a href="{% url 'export_excel_rekap' %}" class="btn btn-success">
+                        📊 Export ke Excel
+                    </a>
+                </div>
+                                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-success">
+                            <tr>
+                                <th>No</th>
+                                <th>Nomor Pendaftaran</th>
+                                <th>Nama Lengkap</th>
+                                <th>Jurusan</th>
+                                <th>Nominal Bayar (Rp)</th>
+                                <th>Tanggal Bayar</th>
+                                <th>Bendahara Input</th>  <!-- <<< Kolom baru -->
+                                <th>No WA</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in rekap_data %}
+                            {% with p=item.pendaftaran %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td><strong>{{ p.nomor_pendaftaran }}</strong></td>
+                                <td>{{ p.nama_lengkap }}</td>
+                                <td>{{ p.get_jurusan_display }}</td>
+                                <td>Rp {{ p.nominal_pembayaran }}</td>
+                                <td>{{ p.tanggal_pembayaran|date:"d/m/Y"|default:"-" }}</td>
+                                <td>{{ item.bendahara_nama }}</td>  <!-- <<< Nama bendahara -->
+                                <td>{{ p.no_wa }}</td>
+                                <td>
+                                    <a href="{% url 'print_kartu' p.pk %}" target="_blank" class="btn btn-sm btn-primary">🖨️ Print Kartu</a>
+                                </td>
+                            </tr>
+                            {% endwith %}
+                            {% empty %}
+                            <tr><td colspan="9" class="text-center">Belum ada siswa daftar ulang</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

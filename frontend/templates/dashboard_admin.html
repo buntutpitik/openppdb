@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard Admin PPDB SMK</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: #f8f9fa; }
+        .stat-card { text-align: center; padding: 20px; border-radius: 10px; color: white; margin-bottom: 20px; }
+        .stat-total { background: #495057; }
+        .stat-terdaftar { background: #ffc107; color: black; }
+        .stat-diterima { background: #28a745; }
+        .stat-daftar-ulang { background: #17a2b8; }
+        .stat-ditolak { background: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white text-center">
+                <h3>DASHBOARD ADMIN PPDB</h3>
+                <p>PPDB SMK - Tahun Ajaran 2026/2027</p>
+                <a href="{% url 'admin:index' %}" class="btn btn-light btn-sm">Admin Panel</a>
+                <a href="{% url 'admin:logout' %}" class="btn btn-danger btn-sm float-end">Logout</a>
+            </div>
+            <div class="card-body">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-success">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Statistik -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="stat-card stat-total shadow">
+                            <h4>{{ total }}</h4>
+                            <p>Total Pendaftar</p>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="stat-card stat-terdaftar shadow">
+                            <h4>{{ terdaftar }}</h4>
+                            <p>Terdaftar</p>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="stat-card stat-diterima shadow">
+                            <h4>{{ diterima }}</h4>
+                            <p>Diterima</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card stat-daftar-ulang shadow">
+                            <h4>{{ daftar_ulang }}</h4>
+                            <p>Daftar Ulang</p>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="stat-card stat-ditolak shadow">
+                            <h4>{{ ditolak }}</h4>
+                            <p>Ditolak</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-success text-white">
+                                <h5>Total Uang Masuk</h5>
+                            </div>
+                            <div class="card-body text-center">
+                                <h2>Rp {{ total_pembayaran }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-warning text-dark">
+                                <h5>Log Aktivitas Terbaru</h5>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group">
+                                    {% for log in log_terbaru %}
+                                    <li class="list-group-item">
+                                        <small>{{ log.timestamp|date:"d/m/Y H:i" }}</small><br>
+                                        <strong>{{ log.user or 'System' }}</strong> - {{ log.aksi }}<br>
+                                        {{ log.detail }}
+                                    </li>
+                                    {% empty %}
+                                    <li class="list-group-item">Belum ada log</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabel Pendaftar (sama kayak bendahara, tapi bisa ubah status & input bayar) -->
+                <h4 class="mb-3">Daftar Seluruh Pendaftar</h4>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>No</th>
+                                <th>Nomor</th>
+                                <th>Nama</th>
+                                <th>Jurusan</th>
+                                <th>Status</th>
+                                <th>Nominal Bayar</th>
+                                <th>Tgl Bayar</th>
+                                <th>No WA</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in pendaftarans %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td><strong>{{ p.nomor_pendaftaran }}</strong></td>
+                                <td>{{ p.nama_lengkap }}</td>
+                                <td>{{ p.get_jurusan_display }}</td>
+                                <td><span class="badge bg-secondary">{{ p.get_status_display }}</span></td>
+                                <td>Rp {{ p.nominal_pembayaran }}</td>
+                                <td>{{ p.tanggal_pembayaran|date:"d/m/Y"|default:"-" }}</td>
+                                <td>{{ p.no_wa }}</td>
+                                <td>
+                                    <a href="{% url 'print_kartu' p.pk %}" target="_blank" class="btn btn-sm btn-primary">Print</a>
+                                    <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modalStatus{{ p.pk }}">Ubah Status</button>
+                                    <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#modalBayar{{ p.pk }}">Input Bayar</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="text-center mt-4">
+                    <a href="{% url 'rekap_daftar_ulang' %}" class="btn btn-info btn-lg">Rekap Daftar Ulang</a>
+                    <a href="{% url 'export_excel_rekap' %}" class="btn btn-success btn-lg ms-3">Export Excel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Ubah Status & Input Bayar (sama kayak dashboard bendahara) -->
+    <!-- Copy dari template bendahara ya beb, biar modalnya jalan -->
+</body>
+</html>

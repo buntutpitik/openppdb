@@ -19,7 +19,6 @@ import dj_database_url
 SERVER_DIR = Path(__file__).parent
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
@@ -31,9 +30,7 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', config('SERVER', default='127.0.0.1')]
 
-
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -41,8 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders', # CORS to bypass js access
-    'whitenoise.runserver_nostatic', # nostatic
+    'corsheaders',  # CORS to bypass js access
+    'whitenoise.runserver_nostatic',  # nostatic
     'backend',
     'frontend',
 ]
@@ -55,8 +52,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware', # CORS to bypass js access
-    'whitenoise.middleware.WhiteNoiseMiddleware', # no static
+    'corsheaders.middleware.CorsMiddleware',  # CORS to bypass js access
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # no static
+    'backend.middleware.CurrentUserMiddleware',  # Middleware log user aktif
 ]
 
 ROOT_URLCONF = 'openppdb.urls'
@@ -79,10 +77,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'openppdb.wsgi.application'
 
-
 # Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -90,10 +85,7 @@ DATABASES = {
     }
 }
 
-
 # Password validation
-# https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -109,10 +101,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
-# https://docs.djangoproject.com/en/2.2/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -123,11 +112,13 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.2/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'frontend/static'),
+]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 MEDIA_URL = '/media/'
@@ -135,13 +126,8 @@ MEDIA_URL = '/media/'
 DATABASE_ROOT = os.path.join(BASE_DIR, 'databasefiles')
 DATABASE_URL = '/database/'
 
-# Extra places for collectstatic to find static files.
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'frontend/static'),
-)
-
 # ALLOW CORS ORIGIN
-CORS_ALLOW_ALL_ORIGINS = True # CORS to bypass js access
+CORS_ALLOW_ALL_ORIGINS = True  # CORS to bypass js access
 
 # Database heroku
 DATABASE_URL = os.environ.get('DATABASE_URL')
