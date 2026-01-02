@@ -3,242 +3,305 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>PPDB SMK Ma'arif 9 Kebumen - Pendaftaran Siswa Baru 2026/2027</title>
+    <title>PPDB SMK Ma'arif 9 Kebumen 2026/2027</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
-        body { 
-            background: linear-gradient(to bottom, #e3f2fd, #bbdefb); 
-            min-height: 100vh; 
+        body {
+            background: linear-gradient(to bottom, #e3f2fd, #bbdefb);
+            min-height: 100vh;
             font-family: 'Segoe UI', sans-serif;
         }
-        .countdown-container { 
-            text-align: center; 
-            padding: 60px 20px; 
-            color: #1565c0; 
+        .countdown-container {
+            text-align: center;
+            padding: 60px 20px;
+            color: #1565c0;
         }
-        .countdown-box { 
-            display: inline-block; 
-            background: white; 
-            padding: 20px; 
-            margin: 15px; 
-            border-radius: 20px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
-            min-width: 120px; 
+        .countdown-box {
+            display: inline-block;
+            background: white;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            min-width: 120px;
         }
-        .countdown-number { 
-            font-size: 3.5rem; 
-            font-weight: bold; 
-            color: #1976d2; 
+        .countdown-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #1976d2;
         }
-        .countdown-label { 
-            font-size: 1rem; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            color: #555; 
+        .countdown-label {
+            font-size: 0.9rem;
+            color: #555;
         }
-        .card { 
-            max-width: 960px; 
-            margin: 20px auto; 
-            border-radius: 20px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
+        .card {
+            max-width: 960px;
+            margin: 20px auto;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
         }
-        .required::after { content: " *"; color: red; font-weight: bold; }
-        small { font-size: 0.85em; }
-        .hidden { display: none; }
+        .required::after {
+            content: " *";
+            color: red;
+            font-weight: bold;
+        }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
+
 <body>
-    <div class="container">
-        <!-- Countdown (muncul sebelum 7 Januari 2026) -->
-        <div id="countdown" class="countdown-container">
-            <h1 class="mb-4">SPMB SMK Ma'arif 9 Kebumen</h1>
-            <h3 class="mb-5">Tahun Ajaran 2026/2027</h3>
-            <h2 class="mb-5">Akan Dibuka Pada</h2>
-            <h4 class="text-primary mb-5">7 Januari 2026 pukul 00:00 WIB</h4>
-            
-            <div>
-                <div class="countdown-box">
-                    <div class="countdown-number" id="days">00</div>
-                    <div class="countdown-label">Hari</div>
-                </div>
-                <div class="countdown-box">
-                    <div class="countdown-number" id="hours">00</div>
-                    <div class="countdown-label">Jam</div>
-                </div>
-                <div class="countdown-box">
-                    <div class="countdown-number" id="minutes">00</div>
-                    <div class="countdown-label">Menit</div>
-                </div>
-                <div class="countdown-box">
-                    <div class="countdown-number" id="seconds">00</div>
-                    <div class="countdown-label">Detik</div>
-                </div>
+<div class="container">
+
+    <!-- ================= COUNTDOWN ================= -->
+    <div id="countdown" class="countdown-container">
+        <h1>SPMB SMK Ma'arif 9 Kebumen</h1>
+        <h3 class="mb-4">Tahun Ajaran 2026/2027</h3>
+        <h4 class="mb-4">Dibuka pada</h4>
+        <h5 class="text-primary mb-5">7 Januari 2026 · 00:00 WIB</h5>
+
+        <div>
+            <div class="countdown-box">
+                <div id="days" class="countdown-number">00</div>
+                <div class="countdown-label">Hari</div>
             </div>
-            
-            <p class="mt-5 text-muted lead">
-                Formulir pendaftaran akan otomatis muncul pada tanggal dan waktu tersebut.<br>
-                Siapkan data diri, NIK, dan informasi lainnya ya!
-            </p>
+            <div class="countdown-box">
+                <div id="hours" class="countdown-number">00</div>
+                <div class="countdown-label">Jam</div>
+            </div>
+            <div class="countdown-box">
+                <div id="minutes" class="countdown-number">00</div>
+                <div class="countdown-label">Menit</div>
+            </div>
+            <div class="countdown-box">
+                <div id="seconds" class="countdown-number">00</div>
+                <div class="countdown-label">Detik</div>
+            </div>
         </div>
 
-        <!-- Form Pendaftaran (hidden dulu, muncul otomatis setelah 7 Januari 2026) -->
-        <div id="form-pendaftaran" class="hidden">
-            <div class="card shadow-lg">
-                <div class="card-header bg-primary text-white text-center py-4">
-                    <h2 class="mb-0">PENDAFTARAN SISWA BARU SMK</h2>
-                    <p class="mb-0 mt-2">Tahun Ajaran 2026/2027</p>
-                </div>
-                <div class="card-body p-4">
-                    <form method="post">
-                        {% csrf_token %}
+        <p class="mt-5 text-muted">
+            Formulir akan muncul otomatis sesuai jadwal.
+        </p>
+    </div>
 
-                        <h4 class="mt-3 mb-4 text-primary">1. Identitas Utama</h4>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label required">NIK (16 Digit)</label>
-                                <input type="text" name="nik" maxlength="16" class="form-control" placeholder="Contoh: 3201234567890123" required>
-                                <small class="text-muted">Masukkan 16 digit NIK dari KK/KTP. Harus unik, belum pernah dipakai daftar.</small>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label required">Nama Lengkap</label>
-                                <input type="text" name="nama_lengkap" class="form-control" placeholder="Contoh: Robet Putra Sadal" required>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label required">Jurusan yang Dipilih</label>
-                                <select name="jurusan" class="form-control" required>
-                                    <option value="">-- Pilih Jurusan --</option>
-                                    <option value="TKRO">Teknik Kendaraan Ringan Otomotif</option>
-                                    <option value="TSM">Teknik Sepeda Motor</option>
-                                    <option value="AKL">Akuntansi dan Keuangan Lembaga</option>
-                                    <option value="RPL">Rekayasa Perangkat Lunak</option>
-                                    <option value="KUL">Kuliner</option>
-                                </select>
-                                <small class="text-muted">Pilih salah satu jurusan yang tersedia.</small>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label required">No WA Aktif</label>
-                                <input type="text" name="no_wa" maxlength="15" class="form-control" placeholder="Contoh: 081234567890" required>
-                                <small class="text-muted">Nomor WhatsApp aktif siswa/orang tua untuk pemberitahuan penting.</small>
-                            </div>
-                        </div>
+    <!-- ================= FORM ================= -->
+    <div id="form-pendaftaran" class="hidden">
 
-                        <h4 class="mt-5 mb-4 text-primary">2. Data Pribadi</h4>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label required">Tempat Lahir</label>
-                                <input type="text" name="tempat_lahir" class="form-control" placeholder="Contoh: Kebumen" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label required">Tanggal Lahir</label>
-                                <input type="date" name="tanggal_lahir" class="form-control" required>
-                                <small class="text-muted">Pilih tanggal lahir dari kalender.</small>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label required">Jenis Kelamin</label>
-                                <select name="jenis_kelamin" class="form-control" required>
-                                    <option value="">-- Pilih --</option>
-                                    <option value="L">Laki-laki</option>
-                                    <option value="P">Perempuan</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label required">Agama</label>
-                                <input type="text" name="agama" class="form-control" placeholder="Contoh: Islam" required>
-                            </div>
-                            <div class="col-md-12 mb-3">
-                                <label class="form-label required">Asal Sekolah</label>
-                                <input type="text" name="asal_sekolah" class="form-control" placeholder="Contoh: MTS Al Sadal 4 Pringpetuk" required>
-                            </div>
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            <strong>Periksa kembali data berikut:</strong>
+            <ul class="mb-0">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="card">
+            <div class="card-header bg-primary text-white text-center">
+                <h3>PENDAFTARAN SISWA BARU</h3>
+                <p class="mb-0">Tahun Ajaran 2026/2027</p>
+            </div>
+
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <!-- IDENTITAS -->
+                    <h5 class="text-primary mb-3">1. Identitas Utama</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required">NIK</label>
+                            <input name="nik" maxlength="16" class="form-control" required
+                                   inputmode="numeric"
+                                   pattern="[0-9]{16}"
+                                   oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                         </div>
 
-                        <h4 class="mt-5 mb-4 text-primary">3. Alamat Lengkap</h4>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Dusun</label>
-                                <input type="text" name="dusun" class="form-control" placeholder="Contoh: Arab Wetan">
-                                <small class="text-muted">Kosongkan jika tidak ada dusun</small>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <label class="form-label">RT</label>
-                                <input type="text" name="rt" class="form-control" placeholder="001">
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <label class="form-label">RW</label>
-                                <input type="text" name="rw" class="form-control" placeholder="002">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label required">Desa/Kelurahan</label>
-                                <input type="text" name="desa_kelurahan" class="form-control" placeholder="Contoh: Kembangturi" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label required">Kecamatan</label>
-                                <input type="text" name="kecamatan" class="form-control" placeholder="Contoh: Pejagoan" required>
-                            </div>
-                            <div class="col-md-12 mb-3">
-                                <label class="form-label required">Kabupaten/Kota</label>
-                                <input type="text" name="kabupaten_kota" class="form-control" placeholder="Contoh: Kebumen" required>
-                            </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required">Nama Lengkap</label>
+                            <input name="nama_lengkap" class="form-control" required>
                         </div>
 
-                        <h4 class="mt-5 mb-4 text-primary">4. Data Orang Tua</h4>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Nama Ayah Kandung</label>
-                                <input type="text" name="nama_ayah" class="form-control" placeholder="Contoh: San Karta">
-                                <small class="text-muted">Kosongkan jika tidak ada</small>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label required">Nama Ibu Kandung</label>
-                                <input type="text" name="nama_ibu" class="form-control" placeholder="Contoh: Suketi" required>
-                            </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required">Jurusan</label>
+                            <select name="jurusan" class="form-control" required>
+                                <option value="">-- Pilih --</option>
+                                <option value="TKRO">TKRO</option>
+                                <option value="TSM">TSM</option>
+                                <option value="AKL">AKL</option>
+                                <option value="RPL">RPL</option>
+                                <option value="KUL">Kuliner</option>
+                            </select>
                         </div>
 
-                        <div class="text-center mt-5">
-                            <button type="submit" class="btn btn-success btn-lg px-5 py-3">
-                                <strong>SUBMIT PENDAFTARAN</strong>
-                            </button>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required">No WhatsApp</label>
+                            <input name="no_wa" class="form-control" required
+                                   inputmode="numeric"
+                                   oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                         </div>
-                        <p class="text-center mt-3 text-muted small">
-                            * = Wajib diisi
-                        </p>
-                    </form>
-                </div>
-                <div class="card-footer text-center text-muted small">
-                    Pastikan semua data diisi dengan benar. Nomor pendaftaran akan otomatis muncul setelah submit.
-                </div>
+                    </div>
+
+                    <!-- DATA PRIBADI -->
+                    <h5 class="text-primary mt-4 mb-3">2. Data Pribadi</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required">Tempat Lahir</label>
+                            <input name="tempat_lahir" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required">Tanggal Lahir</label>
+                            <input type="date" name="tanggal_lahir" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required">Jenis Kelamin</label>
+                            <select name="jenis_kelamin" class="form-control" required>
+                                <option value="">-- Pilih --</option>
+                                <option value="L">Laki-laki</option>
+                                <option value="P">Perempuan</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required">Agama</label>
+                            <input name="agama" class="form-control" required>
+                        </div>
+
+                        <!-- ASAL SEKOLAH -->
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label required">Asal Sekolah</label>
+                            <select id="asal_sekolah_select" class="form-control" required>
+                                <option value="">-- Pilih Asal Sekolah --</option>
+
+                                <optgroup label="MTs">
+                                    <option>MTS AT TAUHID JOGOMERTAN</option>
+                                    <option>MTS DARUSSADAH KRITIG PETANAHAN</option>
+                                    <option>MTS MAFATIKHUL HUDA JOGOSIMO</option>
+                                    <option>MTS MAMBAUL ULUM PURING</option>
+                                    <option>MTS N 2 KEBUMEN</option>
+                                    <option>MTS N 5 KEBUMEN</option>
+                                    <option>MTS N 6 KEBUMEN</option>
+                                    <option>MTS ROUDLOTUL HUDA KEBADONGAN</option>
+                                    <option>MTS SALAFIYAH SYAFIIYAH GROGOLPENATUS</option>
+                                    <option>MTS YAPIKA TANJUNGSARI</option>
+                                </optgroup>
+
+                                <optgroup label="SMP">
+                                    <option>SMP ISLAM DAARUT TAIBIN</option>
+                                    <option>SMP MAARIF 3 KEBUMEN</option>
+                                    <option>SMP N 1 BULUSPESANTREN</option>
+                                    <option>SMP N 1 KLIRONG</option>
+                                    <option>SMP N 1 PEJAGOAN</option>
+                                    <option>SMP N 1 PETANAHAN</option>
+                                    <option>SMP N 1 PURING</option>
+                                    <option>SMP N 1 SRUWENG</option>
+                                    <option>SMP N 2 ADIMULYO</option>
+                                    <option>SMP N 2 AYAH</option>
+                                    <option>SMP N 2 PURING</option>
+                                    <option>SMP N 4 KEBUMEN</option>
+                                    <option>SMP PGRI 1 KLIRONG</option>
+                                    <option>SMP PGRI 1 PURING</option>
+                                    <option>SMP PGRI BULUSPESANTREN</option>
+                                    <option>SMP QURANI GROGOLBENINGSARI</option>
+                                </optgroup>
+
+                                <option value="LAINNYA">LAINNYA</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-12 mb-3 d-none" id="asal_sekolah_manual_wrapper">
+                            <label class="form-label required">Tulis Asal Sekolah</label>
+                            <input type="text" id="asal_sekolah_manual" class="form-control">
+                        </div>
+
+                        <input type="hidden" name="asal_sekolah" id="asal_sekolah_final">
+                    </div>
+
+                    <!-- ALAMAT -->
+                    <h5 class="text-primary mt-4 mb-3">3. Alamat</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3"><input name="dusun" class="form-control" placeholder="Dusun"></div>
+                        <div class="col-md-3 mb-3"><input name="rt" class="form-control" placeholder="RT"></div>
+                        <div class="col-md-3 mb-3"><input name="rw" class="form-control" placeholder="RW"></div>
+                        <div class="col-md-6 mb-3"><input name="desa_kelurahan" class="form-control" placeholder="Desa" required></div>
+                        <div class="col-md-6 mb-3"><input name="kecamatan" class="form-control" placeholder="Kecamatan" required></div>
+                        <div class="col-md-12 mb-3"><input name="kabupaten_kota" class="form-control" placeholder="Kabupaten/Kota" required></div>
+                    </div>
+
+                    <!-- ORANG TUA -->
+                    <h5 class="text-primary mt-4 mb-3">4. Orang Tua</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3"><input name="nama_ayah" class="form-control" placeholder="Nama Ayah"></div>
+                        <div class="col-md-6 mb-3"><input name="nama_ibu" class="form-control" placeholder="Nama Ibu" required></div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button class="btn btn-success btn-lg px-5">
+                            SUBMIT PENDAFTARAN
+                        </button>
+                    </div>
+
+                </form>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        // Tanggal buka: 7 Januari 2026 pukul 00:00 WIB
-        const openDate = new Date("2026-01-07T00:00:00+07:00");
-        
-        function updateCountdown() {
-            const now = new Date();
-            const difference = openDate - now;
-            
-            if (difference <= 0) {
-                document.getElementById("countdown").classList.add("hidden");
-                document.getElementById("form-pendaftaran").classList.remove("hidden");
-                return;
-            }
-            
-            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-            
-            document.getElementById("days").textContent = days.toString().padStart(2, '0');
-            document.getElementById("hours").textContent = hours.toString().padStart(2, '0');
-            document.getElementById("minutes").textContent = minutes.toString().padStart(2, '0');
-            document.getElementById("seconds").textContent = seconds.toString().padStart(2, '0');
+<script>
+    const openDate = new Date("2020-01-07T00:00:00+07:00");
+
+    function updateCountdown() {
+        const now = new Date();
+        const diff = openDate - now;
+
+        if (diff <= 0) {
+            document.getElementById("countdown").classList.add("hidden");
+            document.getElementById("form-pendaftaran").classList.remove("hidden");
+            return;
         }
-        
-        updateCountdown();
-        setInterval(updateCountdown, 1000);
-    </script>
+
+        document.getElementById("days").textContent = Math.floor(diff / 86400000);
+        document.getElementById("hours").textContent = Math.floor(diff / 3600000) % 24;
+        document.getElementById("minutes").textContent = Math.floor(diff / 60000) % 60;
+        document.getElementById("seconds").textContent = Math.floor(diff / 1000) % 60;
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    const selectSekolah = document.getElementById('asal_sekolah_select');
+    const manualBox = document.getElementById('asal_sekolah_manual_wrapper');
+    const manualInput = document.getElementById('asal_sekolah_manual');
+    const finalInput = document.getElementById('asal_sekolah_final');
+
+    selectSekolah.addEventListener('change', () => {
+        if (selectSekolah.value === 'LAINNYA') {
+            manualBox.classList.remove('d-none');
+            manualInput.required = true;
+            finalInput.value = '';
+        } else {
+            manualBox.classList.add('d-none');
+            manualInput.required = false;
+            manualInput.value = '';
+            finalInput.value = selectSekolah.value;
+        }
+    });
+
+    document.querySelector('form').addEventListener('submit', () => {
+        if (selectSekolah.value === 'LAINNYA') {
+            finalInput.value = manualInput.value;
+        }
+    });
+</script>
+
 </body>
 </html>

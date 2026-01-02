@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.validators import RegexValidator
+
 
 # Model untuk data Pendaftaran Siswa Baru (PPDB SMK)
 class Pendaftaran(models.Model):
@@ -31,7 +33,13 @@ class Pendaftaran(models.Model):
         max_length=16,
         unique=True,
         verbose_name="NIK (16 Digit)",
-        help_text="Masukkan 16 digit NIK dari KK/KTP (wajib dan unik)"
+        help_text="Masukkan 16 digit NIK dari KK/KTP (wajib dan unik)",
+        validators=[
+            RegexValidator(
+                regex=r'^\d{16}$',
+                message='NIK harus terdiri dari 16 digit angka'
+            )
+        ]
     )
 
     nama_lengkap = models.CharField(max_length=200, verbose_name="Nama Lengkap")
@@ -47,13 +55,17 @@ class Pendaftaran(models.Model):
 
     agama = models.CharField(max_length=50, verbose_name="Agama")
 
-    asal_sekolah = models.CharField(max_length=200, verbose_name="Asal Sekolah")
+    asal_sekolah = models.CharField(
+        max_length=200,
+        verbose_name="Asal Sekolah"
+    )
+
 
     # Alamat terpisah biar lebih rapi
     dusun = models.CharField(
         max_length=100,
         blank=True,
-        verbose_name="Dusun/Hamlet"
+        verbose_name="Dusun/dukuh"
     )
 
     rt = models.CharField(
@@ -93,8 +105,15 @@ class Pendaftaran(models.Model):
     no_wa = models.CharField(
         max_length=15,
         verbose_name="No WA Aktif",
-        help_text="Nomor WhatsApp yang bisa dihubungi"
+        help_text="Contoh: 08xxxxxxxxxx",
+        validators=[
+            RegexValidator(
+                regex=r'^08\d{8,11}$',
+                message='Nomor WA harus diawali 08 dan berisi 10–13 digit'
+         )
+        ]
     )
+
 
     # Jurusan & Jalur
     jurusan = models.CharField(
@@ -125,9 +144,10 @@ class Pendaftaran(models.Model):
         max_digits=10,
         decimal_places=0,
         default=0,
+        null=True,
         verbose_name="Nominal Pembayaran (Rp)",
-        help_text="Masukkan nominal yang sudah dibayar (tanpa titik/rupiah)"
     )
+
 
     tanggal_pembayaran = models.DateField(
         null=True,

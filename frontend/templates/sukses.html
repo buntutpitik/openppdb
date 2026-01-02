@@ -6,7 +6,7 @@
     <title>Pendaftaran Berhasil!</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="bg-success text-white">
+<body class="bg-light">
     <div class="container text-center mt-5">
         <h1 class="display-4">🎉 SELAMAT! PENDAFTARAN BERHASIL 🎉</h1>
         <div class="card bg-white text-dark mx-auto mt-4" style="max-width: 700px;">
@@ -21,8 +21,11 @@
                     <tr><th>Tanggal Daftar</th><td>{{ pendaftaran.tanggal_pendaftaran|date:"d F Y - H:i" }}</td></tr>
                 </table>
                 <p class="mt-4"><strong>Simpan nomor pendaftaran ini!</strong> Segera datang ke sekretariat untuk wawancara.</p>
-                <a href="/" class="btn btn-primary btn-lg">Kembali ke Form Pendaftaran</a>
-                <a href="{% url 'print_kartu' pendaftaran.pk %}" class="btn btn-warning btn-lg mt-3" target="_blank">
+                <a href="{% url 'home' %}" class="btn btn-primary btn-lg">
+                    Kembali ke Form Pendaftaran
+                <a href="{% url 'print_kartu' pendaftaran.nomor_pendaftaran %}"
+                    class="btn btn-warning btn-lg mt-3"
+                    target="_blank">
                     🖨️ PRINT KARTU PENDAFTARAN
                 </a>
             </div>
