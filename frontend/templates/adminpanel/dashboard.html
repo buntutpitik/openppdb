@@ -1,5 +1,4 @@
-{% extends "admin/base_admin.html" %}
-
+{% extends "adminpanel/base.html" %}
 {% block title %}Dashboard Admin{% endblock %}
 
 {% block content %}
@@ -11,6 +10,7 @@
     </a>
 </div>
 
+<!-- INFO CARD -->
 <div class="row g-4 mb-4">
     <div class="col-md-3">
         <div class="card shadow-sm text-center">
@@ -25,7 +25,7 @@
         <div class="card shadow-sm text-center">
             <div class="card-body">
                 <h6 class="text-muted">Terdaftar</h6>
-                <h2 class="text-primary">{{ terdaftar }}</h2>
+                <h2 class="text-secondary">{{ terdaftar }}</h2>
             </div>
         </div>
     </div>
@@ -49,13 +49,14 @@
     </div>
 </div>
 
+<!-- PENDAFTAR TERBARU -->
 <div class="card shadow-sm">
     <div class="card-header bg-white fw-bold">
         📋 Pendaftar Terbaru
     </div>
     <div class="card-body table-responsive">
         <table class="table table-hover">
-            <thead class="table-light">
+            <thead class="table-light text-center">
                 <tr>
                     <th>Nomor</th>
                     <th>Nama</th>
@@ -69,10 +70,8 @@
                     <td><strong>{{ p.nomor_pendaftaran }}</strong></td>
                     <td>{{ p.nama_lengkap }}</td>
                     <td>{{ p.get_jurusan_display }}</td>
-                    <td>
-                        <span class="badge bg-info">
-                            {{ p.get_status_display }}
-                        </span>
+                    <td class="text-center">
+                        {% include "adminpanel/partials/status_badge.html" with status=p.status %}
                     </td>
                 </tr>
             {% empty %}

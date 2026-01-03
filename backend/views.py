@@ -4,9 +4,11 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator
 
 from .forms import PendaftaranForm
 from .models import Pendaftaran, LogAktivitas
+
 
 # =====================================================
 # ROLE CHECK
@@ -17,6 +19,7 @@ def is_admin(user):
         user.is_authenticated
         and user.groups.filter(name__in=['Admin', 'Panitia']).exists()
     )
+
 
 # =====================================================
 # PUBLIC
@@ -49,8 +52,9 @@ def print_kartu(request, nomor_pendaftaran):
         'pendaftaran': pendaftaran
     })
 
+
 # =====================================================
-# ADMIN
+# ADMIN PANEL
 # =====================================================
 
 @login_required
@@ -58,12 +62,11 @@ def print_kartu(request, nomor_pendaftaran):
 def dashboard_admin(request):
     qs = Pendaftaran.objects.all().order_by('-tanggal_pendaftaran')
 
-    return render(request, 'admin/dashboard_admin.html', {
+    return render(request, 'adminpanel/dashboard.html', {
         'pendaftarans': qs,
         'total': qs.count(),
         'terdaftar': qs.filter(status='terdaftar').count(),
         'diterima': qs.filter(status='diterima').count(),
-        'daftar_ulang': qs.filter(status='daftar_ulang').count(),
         'ditolak': qs.filter(status='ditolak').count(),
     })
 
@@ -71,10 +74,21 @@ def dashboard_admin(request):
 @login_required
 @user_passes_test(is_admin)
 def admin_pendaftaran_list(request):
-    pendaftarans = Pendaftaran.objects.all().order_by('-tanggal_pendaftaran')
+    status_filter = request.GET.get('status')
 
-    return render(request, 'admin/pendaftaran_list.html', {
-        'pendaftarans': pendaftarans
+    qs = Pendaftaran.objects.all().order_by('-tanggal_pendaftaran')
+
+    if status_filter:
+        qs = qs.filter(status=status_filter)
+
+    paginator = Paginator(qs, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'adminpanel/pendaftaran_list.html', {
+        'pendaftarans': page_obj,
+        'status_filter': status_filter,
+        'page_obj': page_obj,
     })
 
 
@@ -100,7 +114,7 @@ def admin_pendaftaran_tambah(request):
     else:
         form = PendaftaranForm()
 
-    return render(request, 'admin/pendaftaran_form.html', {
+    return render(request, 'adminpanel/pendaftaran_form.html', {
         'form': form
     })
 

@@ -1,0 +1,9 @@
+{% if status == 'terdaftar' %}
+    <span class="badge bg-secondary">Terdaftar</span>
+{% elif status == 'diterima' %}
+    <span class="badge bg-success">Diterima</span>
+{% elif status == 'ditolak' %}
+    <span class="badge bg-danger">Ditolak</span>
+{% else %}
+    <span class="badge bg-dark">{{ status }}</span>
+{% endif %}

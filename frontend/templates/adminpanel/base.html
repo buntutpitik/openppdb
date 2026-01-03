@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Admin Panel{% endblock %}</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f5f6f8;
+        }
+        .sidebar {
+            min-height: 100vh;
+            border-right: 1px solid #dee2e6;
+        }
+        .sidebar a {
+            color: #333;
+            text-decoration: none;
+        }
+        .sidebar a.active {
+            background-color: #0d6efd;
+            color: #fff;
+        }
+        .sidebar a:hover {
+            background-color: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+
+<!-- TOP NAVBAR -->
+<nav class="navbar navbar-dark bg-primary px-4">
+    <span class="navbar-brand fw-bold">
+        🎓 PPDB SMK MA'ARIF 9 KEBUMEN
+    </span>
+
+    <div class="d-flex align-items-center gap-3">
+        <span class="text-white">
+            <i class="bi bi-person-circle"></i> {{ request.user.username }}
+        </span>
+        <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm">
+            Logout
+        </a>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+
+        <!-- SIDEBAR -->
+        <aside class="col-md-2 bg-white sidebar p-3">
+            <div class="list-group list-group-flush">
+
+                <a href="{% url 'dashboard_admin' %}"
+                   class="list-group-item list-group-item-action
+                   {% if request.resolver_match.url_name == 'dashboard_admin' %}active{% endif %}">
+                    <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                </a>
+
+                <a href="{% url 'admin_pendaftaran_list' %}"
+                   class="list-group-item list-group-item-action
+                   {% if request.resolver_match.url_name == 'admin_pendaftaran_list' %}active{% endif %}">
+                    <i class="bi bi-people me-2"></i> Data Pendaftaran
+                </a>
+
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="col-md-10 p-4">
+            {% block content %}{% endblock %}
+        </main>
+
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

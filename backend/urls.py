@@ -25,10 +25,14 @@ urlpatterns = [
     # ======================
     path('', views.home, name='home'),
     path('sukses/<int:pk>/', views.sukses, name='sukses'),
-    path('kartu/<str:nomor_pendaftaran>/', views.print_kartu, name='print_kartu'),
+    path(
+        'kartu/<str:nomor_pendaftaran>/',
+        views.print_kartu,
+        name='print_kartu'
+    ),
 
     # ======================
-    # ADMIN
+    # ADMIN PANEL
     # ======================
     path(
         'admin/dashboard/',
@@ -50,4 +54,5 @@ urlpatterns = [
         views.ubah_status_admin,
         name='ubah_status_admin'
     ),
+
 ]
