@@ -5,82 +5,195 @@
     <meta charset="UTF-8">
     <title>{% block title %}Admin Panel{% endblock %}</title>
 
-    <!-- Bootstrap 5 -->
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
+        :root {
+            --bg-body: #f5f6f8;
+            --bg-sidebar: #ffffff;
+            --bg-topbar: #0d6efd;
+            --text-color: #212529;
+            --sidebar-width: 240px;
+            --sidebar-collapsed: 70px;
+        }
+
+        body.dark {
+            --bg-body: #121212;
+            --bg-sidebar: #1e1e1e;
+            --bg-topbar: #1f1f1f;
+            --text-color: #eaeaea;
+        }
+
         body {
-            background-color: #f5f6f8;
+            background: var(--bg-body);
+            color: var(--text-color);
+            overflow: hidden;
         }
+
+        /* TOPBAR */
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            z-index: 1030;
+            background: var(--bg-topbar);
+        }
+
+        /* LAYOUT */
+        .layout {
+            display: flex;
+            margin-top: 56px;
+            height: calc(100vh - 56px);
+        }
+
+        /* SIDEBAR */
         .sidebar {
-            min-height: 100vh;
+            width: var(--sidebar-width);
+            background: var(--bg-sidebar);
             border-right: 1px solid #dee2e6;
+            transition: width .25s;
+            overflow-x: hidden;
         }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed);
+        }
+
+        .sidebar .menu-text {
+            transition: opacity .2s;
+        }
+
+        .sidebar.collapsed .menu-text {
+            opacity: 0;
+            pointer-events: none;
+        }
+
         .sidebar a {
-            color: #333;
-            text-decoration: none;
+            color: var(--text-color);
         }
+
         .sidebar a.active {
-            background-color: #0d6efd;
+            background: #0d6efd;
             color: #fff;
         }
-        .sidebar a:hover {
-            background-color: #e9ecef;
+
+        /* CONTENT */
+        .content-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .content-header {
+            background: var(--bg-body);
+            border-bottom: 1px solid #dee2e6;
+            padding: 16px 24px;
+            z-index: 5;
+        }
+
+        .content-body {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        body.dark table {
+            color: var(--text-color);
         }
     </style>
 </head>
 <body>
 
-<!-- TOP NAVBAR -->
-<nav class="navbar navbar-dark bg-primary px-4">
-    <span class="navbar-brand fw-bold">
-        🎓 PPDB SMK MA'ARIF 9 KEBUMEN
-    </span>
+<!-- TOPBAR -->
+<nav class="navbar navbar-dark topbar px-3 d-flex justify-content-between">
+    <div class="d-flex align-items-center gap-3">
+        <button id="toggleSidebar" class="btn btn-outline-light btn-sm">
+            <i class="bi bi-list"></i>
+        </button>
+        <span class="fw-bold text-white">🎓 PPDB SMK MA'ARIF 9 KEBUMEN</span>
+    </div>
 
     <div class="d-flex align-items-center gap-3">
+        <button id="toggleDark" class="btn btn-outline-light btn-sm">
+            <i class="bi bi-moon"></i>
+        </button>
         <span class="text-white">
             <i class="bi bi-person-circle"></i> {{ request.user.username }}
         </span>
-        <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm">
-            Logout
-        </a>
+        <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm">Logout</a>
     </div>
 </nav>
 
-<div class="container-fluid">
-    <div class="row">
+<div class="layout">
 
-        <!-- SIDEBAR -->
-        <aside class="col-md-2 bg-white sidebar p-3">
-            <div class="list-group list-group-flush">
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="sidebar p-2">
+        <div class="list-group list-group-flush">
 
-                <a href="{% url 'dashboard_admin' %}"
-                   class="list-group-item list-group-item-action
-                   {% if request.resolver_match.url_name == 'dashboard_admin' %}active{% endif %}">
-                    <i class="bi bi-speedometer2 me-2"></i> Dashboard
-                </a>
+            <a href="{% url 'dashboard_admin' %}"
+               class="list-group-item list-group-item-action
+               {% if request.resolver_match.url_name == 'dashboard_admin' %}active{% endif %}">
+                <i class="bi bi-speedometer2 me-2"></i>
+                <span class="menu-text">Dashboard</span>
+            </a>
 
-                <a href="{% url 'admin_pendaftaran_list' %}"
-                   class="list-group-item list-group-item-action
-                   {% if request.resolver_match.url_name == 'admin_pendaftaran_list' %}active{% endif %}">
-                    <i class="bi bi-people me-2"></i> Data Pendaftaran
-                </a>
+            <a href="{% url 'admin_pendaftaran_list' %}"
+               class="list-group-item list-group-item-action
+               {% if request.resolver_match.url_name == 'admin_pendaftaran_list' %}active{% endif %}">
+                <i class="bi bi-people me-2"></i>
+                <span class="menu-text">Data Pendaftaran</span>
+            </a>
 
-            </div>
-        </aside>
+        </div>
+    </aside>
 
-        <!-- MAIN CONTENT -->
-        <main class="col-md-10 p-4">
+    <!-- CONTENT -->
+    <main class="content-wrapper">
+        <div class="content-header">
+            {% block header %}{% endblock %}
+        </div>
+
+        <div class="content-body">
             {% block content %}{% endblock %}
-        </main>
+        </div>
+    </main>
 
-    </div>
 </div>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const body = document.body;
+    const sidebar = document.getElementById('sidebar');
+
+    if (localStorage.getItem('sidebar') === 'collapsed') {
+        sidebar.classList.add('collapsed');
+    }
+
+    document.getElementById('toggleSidebar').onclick = () => {
+        sidebar.classList.toggle('collapsed');
+        localStorage.setItem(
+            'sidebar',
+            sidebar.classList.contains('collapsed') ? 'collapsed' : 'expanded'
+        );
+    };
+
+    if (localStorage.getItem('theme') === 'dark') {
+        body.classList.add('dark');
+    }
+
+    document.getElementById('toggleDark').onclick = () => {
+        body.classList.toggle('dark');
+        localStorage.setItem(
+            'theme',
+            body.classList.contains('dark') ? 'dark' : 'light'
+        );
+    };
+</script>
+
 </body>
 </html>

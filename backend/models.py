@@ -1,26 +1,29 @@
 from django.db import models
 from django.core.validators import RegexValidator
+from datetime import date
 
 
-# Model untuk data Pendaftaran Siswa Baru (PPDB SMK)
+# =========================
+# MODEL PENDAFTARAN
+# =========================
 class Pendaftaran(models.Model):
-    # Pilihan Jurusan SMK (sesuai SMK kamu)
+
+    # =====================
+    # PILIHAN
+    # =====================
     JURUSAN_CHOICES = [
         ('TKRO', 'Teknik Kendaraan Ringan Otomotif'),
         ('TSM', 'Teknik Sepeda Motor'),
         ('AKL', 'Akuntansi dan Keuangan Lembaga'),
         ('RPL', 'Rekayasa Perangkat Lunak'),
         ('KUL', 'Kuliner'),
-        # Kalau mau tambah lagi nanti, tinggal di sini ya sayang~
     ]
 
-    # Pilihan Jalur Pendaftaran (cuma 2)
     JALUR_CHOICES = [
         ('KHUSUS', 'Jalur Khusus'),
         ('UMUM', 'Jalur Umum'),
     ]
 
-    # Pilihan Status Pendaftaran
     STATUS_CHOICES = [
         ('terdaftar', 'Terdaftar'),
         ('diterima', 'Diterima'),
@@ -28,7 +31,9 @@ class Pendaftaran(models.Model):
         ('daftar_ulang', 'Daftar Ulang'),
     ]
 
-    # Identitas utama
+    # =====================
+    # IDENTITAS UTAMA
+    # =====================
     nik = models.CharField(
         max_length=16,
         unique=True,
@@ -42,10 +47,19 @@ class Pendaftaran(models.Model):
         ]
     )
 
-    nama_lengkap = models.CharField(max_length=200, verbose_name="Nama Lengkap")
+    nama_lengkap = models.CharField(
+        max_length=100,
+        verbose_name="Nama Lengkap"
+    )
 
-    tempat_lahir = models.CharField(max_length=100, verbose_name="Tempat Lahir")
-    tanggal_lahir = models.DateField(verbose_name="Tanggal Lahir")
+    tempat_lahir = models.CharField(
+        max_length=100,
+        verbose_name="Tempat Lahir"
+    )
+
+    tanggal_lahir = models.DateField(
+        verbose_name="Tanggal Lahir"
+    )
 
     jenis_kelamin = models.CharField(
         max_length=1,
@@ -53,19 +67,23 @@ class Pendaftaran(models.Model):
         verbose_name="Jenis Kelamin"
     )
 
-    agama = models.CharField(max_length=50, verbose_name="Agama")
+    agama = models.CharField(
+        max_length=50,
+        verbose_name="Agama"
+    )
 
     asal_sekolah = models.CharField(
         max_length=200,
         verbose_name="Asal Sekolah"
     )
 
-
-    # Alamat terpisah biar lebih rapi
+    # =====================
+    # ALAMAT
+    # =====================
     dusun = models.CharField(
         max_length=100,
         blank=True,
-        verbose_name="Dusun/dukuh"
+        verbose_name="Dusun/Dukuh"
     )
 
     rt = models.CharField(
@@ -97,11 +115,23 @@ class Pendaftaran(models.Model):
         verbose_name="Kabupaten/Kota"
     )
 
-    # Data orang tua
-    nama_ayah = models.CharField(max_length=200, blank=True, verbose_name="Nama Ayah Kandung")
-    nama_ibu = models.CharField(max_length=200, verbose_name="Nama Ibu Kandung")
+    # =====================
+    # ORANG TUA
+    # =====================
+    nama_ayah = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name="Nama Ayah Kandung"
+    )
 
-    # Kontak
+    nama_ibu = models.CharField(
+        max_length=200,
+        verbose_name="Nama Ibu Kandung"
+    )
+
+    # =====================
+    # KONTAK
+    # =====================
     no_wa = models.CharField(
         max_length=15,
         verbose_name="No WA Aktif",
@@ -110,12 +140,13 @@ class Pendaftaran(models.Model):
             RegexValidator(
                 regex=r'^08\d{8,11}$',
                 message='Nomor WA harus diawali 08 dan berisi 10–13 digit'
-         )
+            )
         ]
     )
 
-
-    # Jurusan & Jalur
+    # =====================
+    # PENDAFTARAN
+    # =====================
     jurusan = models.CharField(
         max_length=10,
         choices=JURUSAN_CHOICES,
@@ -127,11 +158,9 @@ class Pendaftaran(models.Model):
         choices=JALUR_CHOICES,
         blank=True,
         editable=False,
-        verbose_name="Jalur Pendaftaran",
-        help_text="Otomatis terisi berdasarkan tanggal pendaftaran"
+        verbose_name="Jalur Pendaftaran"
     )
 
-    # Status (default Terdaftar pas baru submit)
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
@@ -139,15 +168,16 @@ class Pendaftaran(models.Model):
         verbose_name="Status Pendaftaran"
     )
 
-    # Pembayaran
+    # =====================
+    # PEMBAYARAN
+    # =====================
     nominal_pembayaran = models.DecimalField(
         max_digits=10,
         decimal_places=0,
         default=0,
         null=True,
-        verbose_name="Nominal Pembayaran (Rp)",
+        verbose_name="Nominal Pembayaran (Rp)"
     )
-
 
     tanggal_pembayaran = models.DateField(
         null=True,
@@ -155,7 +185,9 @@ class Pendaftaran(models.Model):
         verbose_name="Tanggal Pembayaran"
     )
 
-    # Nomor pendaftaran otomatis urut per jurusan
+    # =====================
+    # SISTEM
+    # =====================
     nomor_pendaftaran = models.CharField(
         max_length=20,
         unique=True,
@@ -164,11 +196,32 @@ class Pendaftaran(models.Model):
         verbose_name="Nomor Pendaftaran"
     )
 
-    # Tanggal pendaftaran otomatis
     tanggal_pendaftaran = models.DateTimeField(
         auto_now_add=True,
         verbose_name="Tanggal & Waktu Pendaftaran"
     )
+
+    # =====================
+    # SAVE OVERRIDE (AMAN)
+    # =====================
+    def save(self, *args, **kwargs):
+
+        # Normalisasi nama (AMAN)
+        if self.nama_lengkap:
+            self.nama_lengkap = " ".join(self.nama_lengkap.upper().split())
+
+        # Tentukan jalur otomatis (hanya saat pertama)
+        if not self.jalur:
+            today = date.today()
+
+            if date(2026, 1, 7) <= today <= date(2026, 4, 30):
+                self.jalur = 'KHUSUS'
+            elif date(2026, 5, 1) <= today <= date(2026, 6, 30):
+                self.jalur = 'UMUM'
+            else:
+                self.jalur = None
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.nomor_pendaftaran or 'Belum Ada Nomor'} - {self.nama_lengkap} ({self.jurusan})"
@@ -178,20 +231,39 @@ class Pendaftaran(models.Model):
         verbose_name_plural = "Pendaftaran Siswa Baru"
         ordering = ['-tanggal_pendaftaran']
 
-# Model Log Aktivitas (baru ditambahin)
+
+# =========================
+# MODEL LOG AKTIVITAS
+# =========================
 class LogAktivitas(models.Model):
-    user = models.ForeignKey('auth.User', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="User")
-    pendaftaran = models.ForeignKey(Pendaftaran, on_delete=models.CASCADE, verbose_name="Pendaftaran")
-    aksi = models.CharField(max_length=100, verbose_name="Aksi")
-    detail = models.TextField(verbose_name="Detail Perubahan")
-    timestamp = models.DateTimeField(auto_now_add=True, verbose_name="Waktu")
+    user = models.ForeignKey(
+        'auth.User',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="User"
+    )
+    pendaftaran = models.ForeignKey(
+        Pendaftaran,
+        on_delete=models.CASCADE,
+        verbose_name="Pendaftaran"
+    )
+    aksi = models.CharField(
+        max_length=100,
+        verbose_name="Aksi"
+    )
+    detail = models.TextField(
+        verbose_name="Detail Perubahan"
+    )
+    timestamp = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Waktu"
+    )
 
     def __str__(self):
-        return f"{self.timestamp} - {self.user or 'System'} - {self.aksi} - {self.pendaftaran}"
+        return f"{self.timestamp} - {self.user or 'System'} - {self.aksi}"
 
     class Meta:
         verbose_name = "Log Aktivitas"
         verbose_name_plural = "Log Aktivitas"
         ordering = ['-timestamp']
-
-        

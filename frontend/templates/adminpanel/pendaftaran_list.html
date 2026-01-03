@@ -1,31 +1,63 @@
 {% extends "adminpanel/base.html" %}
 {% block title %}Data Pendaftaran{% endblock %}
 
-{% block content %}
-
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3>📋 Data Pendaftaran</h3>
+{% block header %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">📋 Data Pendaftaran</h3>
     <a href="{% url 'admin_pendaftaran_tambah' %}" class="btn btn-success">
         ➕ Tambah
     </a>
 </div>
 
-<!-- FILTER -->
-<form method="get" class="mb-3">
-    <div class="row g-2">
-        <div class="col-md-3">
+<form method="get">
+    <div class="row g-2 align-items-end">
+
+        <div class="col-md-4">
+            <label class="form-label small text-muted">Pencarian</label>
+            <input type="text" name="q" class="form-control"
+                   placeholder="Nama / NIK / Nomor"
+                   value="{{ keyword|default:'' }}">
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label small text-muted">Status</label>
             <select name="status" class="form-select">
-                <option value="">-- Semua Status --</option>
+                <option value="">Semua</option>
                 <option value="terdaftar" {% if status_filter == 'terdaftar' %}selected{% endif %}>Terdaftar</option>
                 <option value="diterima" {% if status_filter == 'diterima' %}selected{% endif %}>Diterima</option>
                 <option value="ditolak" {% if status_filter == 'ditolak' %}selected{% endif %}>Ditolak</option>
             </select>
         </div>
-        <div class="col-md-2">
-            <button class="btn btn-primary w-100">Filter</button>
+
+        <div class="col-md-3">
+            <label class="form-label small text-muted">Jurusan</label>
+            <select name="jurusan" class="form-select">
+                <option value="">Semua</option>
+                {% for key, label in pendaftarans.paginator.object_list.model.JURUSAN_CHOICES %}
+                    <option value="{{ key }}" {% if jurusan_filter == key %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
         </div>
+
+        <div class="col-md-2">
+            <button class="btn btn-primary w-100">
+                <i class="bi bi-search"></i> Cari
+            </button>
+        </div>
+
+        <div class="col-md-1">
+            <a href="{% url 'admin_pendaftaran_list' %}" class="btn btn-outline-secondary w-100">
+                Reset
+            </a>
+        </div>
+
     </div>
 </form>
+{% endblock %}
+
+{% block content %}
 
 <div class="card shadow-sm">
     <div class="card-body table-responsive">
@@ -38,10 +70,10 @@
                     <th>Nama</th>
                     <th>Jurusan</th>
                     <th>Status</th>
-                    <th width="20%">Aksi</th>
+                    <th width="18%">Aksi</th>
+                    <th width="8%">Print</th>
                 </tr>
             </thead>
-
             <tbody>
             {% for p in pendaftarans %}
                 <tr>
@@ -54,9 +86,9 @@
                     <td class="text-center">
                         {% include "adminpanel/partials/status_badge.html" with status=p.status %}
                     </td>
+
                     <td class="text-center">
                         <div class="d-flex justify-content-center gap-2">
-
                             <form method="post" action="{% url 'ubah_status_admin' p.id %}">
                                 {% csrf_token %}
                                 <input type="hidden" name="status" value="diterima">
@@ -74,13 +106,20 @@
                                     Tolak
                                 </button>
                             </form>
-
                         </div>
+                    </td>
+
+                    <td class="text-center">
+                        <a href="{% url 'print_kartu' p.nomor_pendaftaran %}"
+                           target="_blank"
+                           class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-printer"></i>
+                        </a>
                     </td>
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="6" class="text-center text-muted">
+                    <td colspan="7" class="text-center text-muted">
                         Tidak ada data
                     </td>
                 </tr>
@@ -91,44 +130,28 @@
     </div>
 </div>
 
-<!-- PAGINATION -->
 {% if page_obj.has_other_pages %}
 <nav class="mt-4">
     <ul class="pagination justify-content-center">
-
         {% if page_obj.has_previous %}
         <li class="page-item">
-            <a class="page-link"
-               href="?page={{ page_obj.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}">
-                «
-            </a>
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">«</a>
         </li>
         {% endif %}
 
         {% for num in page_obj.paginator.page_range %}
             {% if page_obj.number == num %}
-                <li class="page-item active">
-                    <span class="page-link">{{ num }}</span>
-                </li>
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
             {% else %}
-                <li class="page-item">
-                    <a class="page-link"
-                       href="?page={{ num }}{% if status_filter %}&status={{ status_filter }}{% endif %}">
-                        {{ num }}
-                    </a>
-                </li>
+                <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
             {% endif %}
         {% endfor %}
 
         {% if page_obj.has_next %}
         <li class="page-item">
-            <a class="page-link"
-               href="?page={{ page_obj.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}">
-                »
-            </a>
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">»</a>
         </li>
         {% endif %}
-
     </ul>
 </nav>
 {% endif %}
