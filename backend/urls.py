@@ -1,73 +1,50 @@
 from django.urls import path
-from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from . import views
 
-# =====================================================
-# CUSTOM ADMIN TITLE
-# =====================================================
-admin.site.site_header = "Admin Panel PPDB SMK Marsa"
-admin.site.site_title = "PPDB SMK Marsa"
-admin.site.index_title = "Dashboard Admin PPDB SMK Marsa"
-
-# =====================================================
-# URL PATTERNS
-# =====================================================
 urlpatterns = [
+
+    # ======================
+    # AUTH
+    # ======================
+    path(
+        'accounts/login/',
+        auth_views.LoginView.as_view(
+            template_name='registration/login.html'
+        ),
+        name='login'
+    ),
+    path(
+        'accounts/logout/',
+        auth_views.LogoutView.as_view(),
+        name='logout'
+    ),
 
     # ======================
     # PUBLIC
     # ======================
     path('', views.home, name='home'),
     path('sukses/<int:pk>/', views.sukses, name='sukses'),
-
-    path(
-    'kartu/<str:nomor_pendaftaran>/',
-    views.print_kartu,
-    name='print_kartu'
-    ),
+    path('kartu/<str:nomor_pendaftaran>/', views.print_kartu, name='print_kartu'),
 
     # ======================
-    # BENDAHARA
-    # ======================
-    path(
-        'bendahara/dashboard/',
-        views.dashboard_bendahara,
-        name='dashboard_bendahara'
-    ),
-
-    path(
-        'bendahara/ubah-status/<int:pk>/',
-        views.ubah_status_daftar_ulang,
-        name='ubah_status_daftar_ulang'
-    ),
-
-    path(
-        'bendahara/input-pembayaran/<int:pk>/',
-        views.input_pembayaran,
-        name='input_pembayaran'
-    ),
-
-    path(
-        'bendahara/rekap-daftar-ulang/',
-        views.rekap_daftar_ulang,
-        name='rekap_daftar_ulang'
-    ),
-
-    path(
-        'bendahara/export-excel/',
-        views.export_excel_rekap,
-        name='export_excel_rekap'
-    ),
-
-    # ======================
-    # ADMIN (NON SUPERUSER)
+    # ADMIN
     # ======================
     path(
         'admin/dashboard/',
         views.dashboard_admin,
         name='dashboard_admin'
     ),
-
+    path(
+        'admin/pendaftaran/',
+        views.admin_pendaftaran_list,
+        name='admin_pendaftaran_list'
+    ),
+    path(
+        'admin/pendaftaran/tambah/',
+        views.admin_pendaftaran_tambah,
+        name='admin_pendaftaran_tambah'
+    ),
     path(
         'admin/ubah-status/<int:pk>/',
         views.ubah_status_admin,

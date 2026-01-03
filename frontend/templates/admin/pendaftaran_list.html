@@ -1,0 +1,67 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Data Pendaftaran{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>📋 Data Pendaftaran Siswa</h3>
+    <a href="{% url 'admin_pendaftaran_tambah' %}" class="btn btn-success">
+        ➕ Tambah Pendaftaran
+    </a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-primary text-center">
+                <tr>
+                    <th>No</th>
+                    <th>Nomor</th>
+                    <th>Nama</th>
+                    <th>Jurusan</th>
+                    <th>Asal Sekolah</th>
+                    <th>Status</th>
+                    <th width="200">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for p in pendaftarans %}
+                <tr>
+                    <td class="text-center">{{ forloop.counter }}</td>
+                    <td><strong>{{ p.nomor_pendaftaran }}</strong></td>
+                    <td>{{ p.nama_lengkap }}</td>
+                    <td>{{ p.get_jurusan_display }}</td>
+                    <td>{{ p.asal_sekolah }}</td>
+                    <td class="text-center">
+                        <span class="badge bg-info">
+                            {{ p.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <form method="post" action="{% url 'ubah_status_admin' p.id %}" class="d-inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="status" value="diterima">
+                            <button class="btn btn-sm btn-success">✔ Terima</button>
+                        </form>
+
+                        <form method="post" action="{% url 'ubah_status_admin' p.id %}" class="d-inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="status" value="ditolak">
+                            <button class="btn btn-sm btn-danger">✖ Tolak</button>
+                        </form>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted">
+                        Belum ada data pendaftaran
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

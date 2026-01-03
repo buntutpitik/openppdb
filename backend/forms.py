@@ -40,6 +40,18 @@ class PendaftaranForm(forms.ModelForm):
             'tanggal_lahir': forms.DateInput(attrs={'type': 'date'}),
         }
 
+         # ⬇️ TAMBAHIN DI SINI
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for name, field in self.fields.items():
+            # jangan timpa asal_sekolah (sudah di-set manual)
+            if name != 'asal_sekolah':
+                field.widget.attrs.setdefault(
+                    'class',
+                    'form-control'
+                )
+
+
     # ================= VALIDASI =================
 
     def clean_nik(self):

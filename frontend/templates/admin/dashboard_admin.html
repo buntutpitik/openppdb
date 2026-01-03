@@ -1,0 +1,90 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Dashboard Admin{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>📊 Dashboard Admin</h3>
+    <a href="{% url 'admin_pendaftaran_list' %}" class="btn btn-primary">
+        📋 Data Pendaftaran
+    </a>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <h6 class="text-muted">Total</h6>
+                <h2>{{ total }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <h6 class="text-muted">Terdaftar</h6>
+                <h2 class="text-primary">{{ terdaftar }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <h6 class="text-muted">Diterima</h6>
+                <h2 class="text-success">{{ diterima }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <h6 class="text-muted">Ditolak</h6>
+                <h2 class="text-danger">{{ ditolak }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-white fw-bold">
+        📋 Pendaftar Terbaru
+    </div>
+    <div class="card-body table-responsive">
+        <table class="table table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Nomor</th>
+                    <th>Nama</th>
+                    <th>Jurusan</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for p in pendaftarans|slice:":5" %}
+                <tr>
+                    <td><strong>{{ p.nomor_pendaftaran }}</strong></td>
+                    <td>{{ p.nama_lengkap }}</td>
+                    <td>{{ p.get_jurusan_display }}</td>
+                    <td>
+                        <span class="badge bg-info">
+                            {{ p.get_status_display }}
+                        </span>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted">
+                        Belum ada data
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
