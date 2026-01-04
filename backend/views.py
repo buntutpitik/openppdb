@@ -5,16 +5,24 @@ from django.views.decorators.http import require_POST
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.http import HttpResponse
 
 from .forms import PendaftaranForm
+from .forms_admin import AdminPendaftaranForm
 from .models import Pendaftaran, LogAktivitas
 
 # =========================
-# QR CODE (TAJAM & AMAN)
+# QR CODE
 # =========================
 import qrcode
 from io import BytesIO
 import base64
+
+# =========================
+# EXCEL
+# =========================
+from openpyxl import Workbook
+from openpyxl.utils import get_column_letter
 
 
 def generate_qr_base64(data):
@@ -124,8 +132,7 @@ def admin_pendaftaran_list(request):
         )
 
     paginator = Paginator(qs, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj = paginator.get_page(request.GET.get('page'))
 
     return render(request, 'adminpanel/pendaftaran_list.html', {
         'pendaftarans': page_obj,
@@ -136,31 +143,154 @@ def admin_pendaftaran_list(request):
     })
 
 
+# =====================================================
+# DETAIL PENDAFTAR (ADMIN)
+# =====================================================
+@login_required
+@user_passes_test(is_admin)
+def admin_pendaftaran_detail(request, nomor):
+    pendaftaran = get_object_or_404(
+        Pendaftaran,
+        nomor_pendaftaran=nomor
+    )
+
+    return render(request, 'adminpanel/pendaftaran_detail.html', {
+        'pendaftaran': pendaftaran
+    })
+
+
 @login_required
 @user_passes_test(is_admin)
 def admin_pendaftaran_tambah(request):
     if request.method == 'POST':
-        form = PendaftaranForm(request.POST)
+        form = AdminPendaftaranForm(request.POST)
         if form.is_valid():
             pendaftaran = form.save()
 
             LogAktivitas.objects.create(
                 user=request.user,
                 pendaftaran=pendaftaran,
-                aksi="Tambah Pendaftaran",
-                detail="Ditambahkan oleh admin"
+                aksi="Tambah Pendaftaran (Admin)",
+                detail="Pendaftaran dibuat oleh admin"
             )
 
             messages.success(request, "Pendaftaran berhasil ditambahkan")
             return redirect('admin_pendaftaran_list')
     else:
-        form = PendaftaranForm()
+        form = AdminPendaftaranForm()
 
     return render(request, 'adminpanel/pendaftaran_form.html', {
-        'form': form
+        'form': form,
+        'mode': 'tambah'
     })
 
 
+# =====================================================
+# EDIT DATA PENDAFTAR (ADMIN)
+# =====================================================
+@login_required
+@user_passes_test(is_admin)
+def admin_pendaftaran_edit(request, pk):
+    pendaftaran = get_object_or_404(Pendaftaran, pk=pk)
+
+    if request.method == 'POST':
+        form = AdminPendaftaranForm(
+            request.POST,
+            instance=pendaftaran
+        )
+        if form.is_valid():
+            form.save()
+
+            LogAktivitas.objects.create(
+                user=request.user,
+                pendaftaran=pendaftaran,
+                aksi="Verifikasi / Edit Admin",
+                detail="Data diperbarui admin"
+            )
+
+            messages.success(
+                request,
+                "Data admin pendaftar berhasil disimpan."
+            )
+            return redirect('admin_pendaftaran_list')
+    else:
+        form = AdminPendaftaranForm(instance=pendaftaran)
+
+    return render(
+        request,
+        'adminpanel/pendaftaran_form.html',
+        {
+            'form': form,
+            'pendaftaran': pendaftaran,
+            'mode': 'edit',
+        }
+    )
+
+
+# =====================================================
+# EXPORT EXCEL (ADMIN – TANGGAL DAFTAR DI DEPAN)
+# =====================================================
+@login_required
+@user_passes_test(is_admin)
+def admin_pendaftaran_export_excel(request):
+    form = AdminPendaftaranForm()
+    fields = form.fields
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Pendaftaran"
+
+    # HEADER (tanggal daftar di paling depan)
+    headers = ["Tanggal Daftar"]
+    headers += [
+        field.label or name.replace("_", " ").title()
+        for name, field in fields.items()
+    ]
+    ws.append(headers)
+
+    # DATA
+    for obj in Pendaftaran.objects.all().order_by('-tanggal_pendaftaran'):
+        row = [
+            obj.tanggal_pendaftaran.strftime("%d-%m-%Y %H:%M")
+            if obj.tanggal_pendaftaran else ""
+        ]
+
+        for field_name in fields.keys():
+            value = getattr(obj, field_name, "")
+
+            # Choice field → display
+            if hasattr(obj, f"get_{field_name}_display"):
+                value = getattr(obj, f"get_{field_name}_display")()
+
+            # Date / DateTime
+            elif hasattr(value, "strftime"):
+                value = value.strftime("%d-%m-%Y")
+
+            row.append(value if value is not None else "")
+
+        ws.append(row)
+
+    # AUTO WIDTH
+    for col in ws.columns:
+        max_length = 0
+        col_letter = get_column_letter(col[0].column)
+        for cell in col:
+            if cell.value:
+                max_length = max(max_length, len(str(cell.value)))
+        ws.column_dimensions[col_letter].width = max_length + 2
+
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    response["Content-Disposition"] = 'attachment; filename="pendaftaran.xlsx"'
+    wb.save(response)
+
+    return response
+
+
+# =====================================================
+# UBAH STATUS CEPAT
+# =====================================================
 @login_required
 @user_passes_test(is_admin)
 @require_POST

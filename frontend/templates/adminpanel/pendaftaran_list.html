@@ -4,9 +4,18 @@
 {% block header %}
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h3 class="mb-0">📋 Data Pendaftaran</h3>
-    <a href="{% url 'admin_pendaftaran_tambah' %}" class="btn btn-success">
-        ➕ Tambah
-    </a>
+
+    <div class="d-flex gap-2">
+        <a href="{% url 'admin_pendaftaran_export_excel' %}"
+           class="btn btn-outline-success">
+            Export Excel
+        </a>
+
+        <a href="{% url 'admin_pendaftaran_tambah' %}"
+           class="btn btn-success">
+            ➕ Tambah
+        </a>
+    </div>
 </div>
 
 <form method="get">
@@ -48,7 +57,8 @@
         </div>
 
         <div class="col-md-1">
-            <a href="{% url 'admin_pendaftaran_list' %}" class="btn btn-outline-secondary w-100">
+            <a href="{% url 'admin_pendaftaran_list' %}"
+               class="btn btn-outline-secondary w-100">
                 Reset
             </a>
         </div>
@@ -70,7 +80,7 @@
                     <th>Nama</th>
                     <th>Jurusan</th>
                     <th>Status</th>
-                    <th width="18%">Aksi</th>
+                    <th width="20%">Aksi</th>
                     <th width="8%">Print</th>
                 </tr>
             </thead>
@@ -80,15 +90,30 @@
                     <td class="text-center">
                         {{ forloop.counter0|add:pendaftarans.start_index }}
                     </td>
-                    <td><strong>{{ p.nomor_pendaftaran }}</strong></td>
+
+                    <!-- NOMOR → DETAIL -->
+                    <td>
+                        <a href="{% url 'admin_pendaftaran_detail' p.nomor_pendaftaran %}"
+                        class="fw-bold text-decoration-none">
+                            {{ p.nomor_pendaftaran }}
+                        </a>
+                    </td>
+
                     <td>{{ p.nama_lengkap }}</td>
                     <td>{{ p.get_jurusan_display }}</td>
                     <td class="text-center">
                         {% include "adminpanel/partials/status_badge.html" with status=p.status %}
                     </td>
 
+                    <!-- AKSI -->
                     <td class="text-center">
-                        <div class="d-flex justify-content-center gap-2">
+                        <div class="d-flex justify-content-center gap-2 flex-wrap">
+
+                            <a href="{% url 'admin_pendaftaran_edit' p.pk %}"
+                               class="btn btn-sm btn-warning">
+                                Edit
+                            </a>
+
                             <form method="post" action="{% url 'ubah_status_admin' p.id %}">
                                 {% csrf_token %}
                                 <input type="hidden" name="status" value="diterima">
@@ -106,9 +131,11 @@
                                     Tolak
                                 </button>
                             </form>
+
                         </div>
                     </td>
 
+                    <!-- PRINT -->
                     <td class="text-center">
                         <a href="{% url 'print_kartu' p.nomor_pendaftaran %}"
                            target="_blank"
@@ -141,9 +168,13 @@
 
         {% for num in page_obj.paginator.page_range %}
             {% if page_obj.number == num %}
-                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
             {% else %}
-                <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
             {% endif %}
         {% endfor %}
 

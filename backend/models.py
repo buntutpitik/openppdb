@@ -38,7 +38,6 @@ class Pendaftaran(models.Model):
         max_length=16,
         unique=True,
         verbose_name="NIK (16 Digit)",
-        help_text="Masukkan 16 digit NIK dari KK/KTP (wajib dan unik)",
         validators=[
             RegexValidator(
                 regex=r'^\d{16}$',
@@ -89,15 +88,13 @@ class Pendaftaran(models.Model):
     rt = models.CharField(
         max_length=10,
         blank=True,
-        verbose_name="RT",
-        help_text="Contoh: 001"
+        verbose_name="RT"
     )
 
     rw = models.CharField(
         max_length=10,
         blank=True,
-        verbose_name="RW",
-        help_text="Contoh: 002"
+        verbose_name="RW"
     )
 
     desa_kelurahan = models.CharField(
@@ -135,7 +132,6 @@ class Pendaftaran(models.Model):
     no_wa = models.CharField(
         max_length=15,
         verbose_name="No WA Aktif",
-        help_text="Contoh: 08xxxxxxxxxx",
         validators=[
             RegexValidator(
                 regex=r'^08\d{8,11}$',
@@ -166,6 +162,41 @@ class Pendaftaran(models.Model):
         choices=STATUS_CHOICES,
         default='terdaftar',
         verbose_name="Status Pendaftaran"
+    )
+
+    # =====================
+    # DATA ADMIN
+    # =====================
+    nisn = models.CharField(
+        max_length=20,
+        blank=True,
+        verbose_name="NISN"
+    )
+
+    nilai_skl = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        verbose_name="Nilai SKL"
+    )
+
+    pekerjaan_ayah = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name="Pekerjaan Ayah"
+    )
+
+    pekerjaan_ibu = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name="Pekerjaan Ibu"
+    )
+
+    keringanan_prestasi = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Keringanan / Prestasi"
     )
 
     # =====================
@@ -202,15 +233,13 @@ class Pendaftaran(models.Model):
     )
 
     # =====================
-    # SAVE OVERRIDE (AMAN)
+    # SAVE OVERRIDE
     # =====================
     def save(self, *args, **kwargs):
 
-        # Normalisasi nama (AMAN)
         if self.nama_lengkap:
             self.nama_lengkap = " ".join(self.nama_lengkap.upper().split())
 
-        # Tentukan jalur otomatis (hanya saat pertama)
         if not self.jalur:
             today = date.today()
 
@@ -223,8 +252,22 @@ class Pendaftaran(models.Model):
 
         super().save(*args, **kwargs)
 
+    # =====================
+    # PROPERTY (TAMBAHAN)
+    # =====================
+    @property
+    def alamat_lengkap(self):
+        parts = [
+            f"Dusun {self.dusun}" if self.dusun else None,
+            f"RT {self.rt}/RW {self.rw}" if self.rt and self.rw else None,
+            self.desa_kelurahan,
+            self.kecamatan,
+            self.kabupaten_kota,
+        ]
+        return ", ".join([p for p in parts if p])
+
     def __str__(self):
-        return f"{self.nomor_pendaftaran or 'Belum Ada Nomor'} - {self.nama_lengkap} ({self.jurusan})"
+        return f"{self.nomor_pendaftaran or 'Belum Ada Nomor'} - {self.nama_lengkap}"
 
     class Meta:
         verbose_name = "Pendaftaran Siswa Baru"
@@ -240,30 +283,20 @@ class LogAktivitas(models.Model):
         'auth.User',
         on_delete=models.SET_NULL,
         null=True,
-        blank=True,
-        verbose_name="User"
+        blank=True
     )
     pendaftaran = models.ForeignKey(
         Pendaftaran,
-        on_delete=models.CASCADE,
-        verbose_name="Pendaftaran"
+        on_delete=models.CASCADE
     )
     aksi = models.CharField(
-        max_length=100,
-        verbose_name="Aksi"
+        max_length=100
     )
-    detail = models.TextField(
-        verbose_name="Detail Perubahan"
-    )
-    timestamp = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name="Waktu"
-    )
+    detail = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.timestamp} - {self.user or 'System'} - {self.aksi}"
+        return f"{self.timestamp} - {self.aksi}"
 
     class Meta:
-        verbose_name = "Log Aktivitas"
-        verbose_name_plural = "Log Aktivitas"
         ordering = ['-timestamp']

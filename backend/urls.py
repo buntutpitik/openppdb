@@ -1,6 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
+from .views import admin_pendaftaran_export_excel
 
 urlpatterns = [
 
@@ -50,9 +51,26 @@ urlpatterns = [
         name='admin_pendaftaran_tambah'
     ),
     path(
+        'admin/pendaftaran/export/',
+        admin_pendaftaran_export_excel,
+        name='admin_pendaftaran_export_excel'
+    ),
+    path(
+        'pendaftaran/<str:nomor>/',
+        views.admin_pendaftaran_detail,
+        name='admin_pendaftaran_detail'
+    ),
+
+    # ✅ EDIT (PAKAI PK)
+    path(
+        'admin/pendaftaran/<int:pk>/edit/',
+        views.admin_pendaftaran_edit,
+        name='admin_pendaftaran_edit'
+    ),
+
+    path(
         'admin/ubah-status/<int:pk>/',
         views.ubah_status_admin,
         name='ubah_status_admin'
     ),
-
 ]

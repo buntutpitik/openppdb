@@ -1,0 +1,120 @@
+{% extends "adminpanel/base.html" %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="mb-0">📄 Detail Pendaftaran</h3>
+    <div class="d-flex gap-2">
+        <a href="{% url 'admin_pendaftaran_edit' pendaftaran.pk %}" class="btn btn-warning">
+            ✏️ Edit
+        </a>
+        <a href="{% url 'print_kartu' pendaftaran.nomor_pendaftaran %}"
+           target="_blank"
+           class="btn btn-primary">
+            🖨️ Print
+        </a>
+        <a href="{% url 'admin_pendaftaran_list' %}" class="btn btn-outline-secondary">
+            ⬅️ Kembali
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+
+    <!-- ================= DATA PENDAFTAR ================= -->
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header fw-bold">👤 Data Pendaftar</div>
+            <div class="card-body">
+                <table class="table table-borderless mb-0">
+                    <tr>
+                        <th width="40%">Nomor Pendaftaran</th>
+                        <td>{{ pendaftaran.nomor_pendaftaran }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nama Lengkap</th>
+                        <td>{{ pendaftaran.nama_lengkap }}</td>
+                    </tr>
+                    <tr>
+                        <th>NIK</th>
+                        <td>{{ pendaftaran.nik }}</td>
+                    </tr>
+                    <tr>
+                        <th>Jenis Kelamin</th>
+                        <td>{{ pendaftaran.get_jenis_kelamin_display }}</td>
+                    </tr>
+                    <tr>
+                        <th>Tanggal Lahir</th>
+                        <td>{{ pendaftaran.tanggal_lahir|date:"d F Y" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Alamat</th>
+                        <td>{{ pendaftaran.alamat_lengkap }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= DATA AKADEMIK ================= -->
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header fw-bold">🎓 Data Akademik</div>
+            <div class="card-body">
+                <table class="table table-borderless mb-0">
+                    <tr>
+                        <th width="40%">Jurusan</th>
+                        <td>{{ pendaftaran.get_jurusan_display }}</td>
+                    </tr>
+                    <tr>
+                        <th>Asal Sekolah</th>
+                        <td>{{ pendaftaran.asal_sekolah }}</td>
+                    </tr>
+                    <tr>
+                        <th>NISN</th>
+                        <td>{{ pendaftaran.nisn|default:"-" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nilai SKL</th>
+                        <td>{{ pendaftaran.nilai_skl|default:"-" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Status</th>
+                        <td>
+                            {% include "adminpanel/partials/status_badge.html" with status=pendaftaran.status %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Tanggal Daftar</th>
+                        <td>{{ pendaftaran.tanggal_pendaftaran|date:"d F Y, H:i" }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= DATA ORANG TUA ================= -->
+    <div class="col-md-12">
+        <div class="card shadow-sm">
+            <div class="card-header fw-bold">👨‍👩‍👧 Data Orang Tua & Keringanan</div>
+            <div class="card-body">
+                <table class="table table-borderless mb-0">
+                    <tr>
+                        <th width="25%">Pekerjaan Ayah</th>
+                        <td>{{ pendaftaran.pekerjaan_ayah|default:"-" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Pekerjaan Ibu</th>
+                        <td>{{ pendaftaran.pekerjaan_ibu|default:"-" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Keringanan / Prestasi</th>
+                        <td>{{ pendaftaran.keringanan_prestasi|default:"-" }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

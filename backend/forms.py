@@ -1,12 +1,12 @@
 from django import forms
-from .models import Pendaftaran
 from django.core.exceptions import ValidationError
+from .models import Pendaftaran
 import re
 
 
 class PendaftaranForm(forms.ModelForm):
 
-    # ⬇️ FINAL: asal sekolah bebas (dropdown + manual di-handle HTML)
+    # Asal sekolah manual (bebas)
     asal_sekolah = forms.CharField(
         label="Asal Sekolah",
         max_length=200,
@@ -40,17 +40,14 @@ class PendaftaranForm(forms.ModelForm):
             'tanggal_lahir': forms.DateInput(attrs={'type': 'date'}),
         }
 
-         # ⬇️ TAMBAHIN DI SINI
+    # ================= INIT =================
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for name, field in self.fields.items():
-            # jangan timpa asal_sekolah (sudah di-set manual)
-            if name != 'asal_sekolah':
-                field.widget.attrs.setdefault(
-                    'class',
-                    'form-control'
-                )
 
+        for name, field in self.fields.items():
+            if name != 'asal_sekolah':
+                field.widget.attrs.setdefault('class', 'form-control')
 
     # ================= VALIDASI =================
 
@@ -60,7 +57,11 @@ class PendaftaranForm(forms.ModelForm):
         if not re.match(r'^\d{16}$', nik):
             raise ValidationError("NIK harus terdiri dari 16 digit angka.")
 
-        if Pendaftaran.objects.filter(nik=nik).exists():
+        qs = Pendaftaran.objects.filter(nik=nik)
+        if self.instance.pk:
+            qs = qs.exclude(pk=self.instance.pk)
+
+        if qs.exists():
             raise ValidationError("NIK ini sudah terdaftar.")
 
         return nik
@@ -79,9 +80,9 @@ class PendaftaranForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
 
-        # 🔒 field otomatis (anti manipulasi)
-        self.instance.status = 'terdaftar'
-        self.instance.jalur = None
-        self.instance.nomor_pendaftaran = None
+        # 🔐 hanya set default saat CREATE
+        if not self.instance.pk:
+            self.instance.status = 'terdaftar'
+            self.instance.jalur = None
 
         return cleaned_data
