@@ -1,7 +1,6 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
-from .views import admin_pendaftaran_export_excel
 
 urlpatterns = [
 
@@ -40,28 +39,31 @@ urlpatterns = [
         views.dashboard_admin,
         name='dashboard_admin'
     ),
+
     path(
         'admin/pendaftaran/',
         views.admin_pendaftaran_list,
         name='admin_pendaftaran_list'
     ),
+
     path(
         'admin/pendaftaran/tambah/',
         views.admin_pendaftaran_tambah,
         name='admin_pendaftaran_tambah'
     ),
+
     path(
         'admin/pendaftaran/export/',
-        admin_pendaftaran_export_excel,
+        views.admin_pendaftaran_export_excel,
         name='admin_pendaftaran_export_excel'
     ),
+
     path(
-        'pendaftaran/<str:nomor>/',
+        'admin/pendaftaran/<str:nomor>/',
         views.admin_pendaftaran_detail,
         name='admin_pendaftaran_detail'
     ),
 
-    # ✅ EDIT (PAKAI PK)
     path(
         'admin/pendaftaran/<int:pk>/edit/',
         views.admin_pendaftaran_edit,
@@ -69,8 +71,28 @@ urlpatterns = [
     ),
 
     path(
-        'admin/ubah-status/<int:pk>/',
+        'admin/pendaftaran/<int:pk>/ubah-status/',
         views.ubah_status_admin,
         name='ubah_status_admin'
     ),
+
+    # ======================
+    # BENDAHARA
+    # ======================
+    path(
+        'admin/bendahara/daftar-ulang/<int:pk>/',
+        views.bendahara_daftar_ulang,
+        name='bendahara_daftar_ulang'
+    ),
+    path(
+        'bendahara/rekap-daftar-ulang/',
+        views.rekap_daftar_ulang,
+        name='rekap_daftar_ulang'
+    ),
+    path(
+        'bendahara/rekap-daftar-ulang/export/',
+        views.export_rekap_daftar_ulang_excel,
+        name='export_rekap_daftar_ulang_excel'
+    ),
+
 ]

@@ -1,0 +1,124 @@
+{% extends "adminpanel/base.html" %}
+{% load humanize %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h3 class="mb-3">
+        Rekap Daftar Ulang
+    </h3>
+
+    <div class="mb-3">
+        <a href="{% url 'export_rekap_daftar_ulang_excel' %}?tanggal_dari={{ tanggal_dari }}&tanggal_sampai={{ tanggal_sampai }}&petugas={{ petugas_selected }}&q={{ keyword }}"
+           class="btn btn-success">
+            Export Excel
+        </a>
+    </div>
+
+    <form method="get" class="row g-2 mb-3">
+
+        <div class="col-md-3">
+            <label class="form-label">Tanggal Dari</label>
+            <input type="date"
+                   name="tanggal_dari"
+                   class="form-control"
+                   value="{{ tanggal_dari }}">
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Tanggal Sampai</label>
+            <input type="date"
+                   name="tanggal_sampai"
+                   class="form-control"
+                   value="{{ tanggal_sampai }}">
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Petugas</label>
+            <select name="petugas" class="form-select">
+                <option value="">-- Semua --</option>
+                {% for p in daftar_petugas %}
+                    <option value="{{ p.petugas__id }}"
+                        {% if petugas_selected == p.petugas__id|stringformat:"s" %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ p.petugas__username }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Cari</label>
+            <input type="text"
+                   name="q"
+                   class="form-control"
+                   placeholder="Nama / Nomor Pendaftaran"
+                   value="{{ keyword }}">
+        </div>
+
+        <div class="col-md-12">
+            <button type="submit" class="btn btn-primary w-100">
+                Filter
+            </button>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>No</th>
+                    <th>Nomor Pendaftaran</th>
+                    <th>Nama</th>
+                    <th>Jurusan</th>
+                    <th>Nominal</th>
+                    <th>Tanggal Pembayaran</th>
+                    <th>Petugas</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in data %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ p.pendaftaran.nomor_pendaftaran }}</td>
+                    <td>{{ p.pendaftaran.nama_lengkap }}</td>
+                    <td>{{ p.pendaftaran.get_jurusan_display }}</td>
+                    <td class="text-end">
+                        Rp {{ p.nominal|intcomma }}
+                    </td>
+                    <td>
+                        {{ p.tanggal|date:"d-m-Y" }}
+                    </td>
+                    <td>
+                        {{ p.petugas.username|default:"-" }}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted">
+                        Belum ada data daftar ulang
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+            {% if data %}
+            <tfoot class="table-secondary">
+                <tr>
+                    <th colspan="4" class="text-end">
+                        Total
+                    </th>
+                    <th class="text-end">
+                        Rp {{ total_nominal|intcomma }}
+                    </th>
+                    <th colspan="2"></th>
+                </tr>
+            </tfoot>
+            {% endif %}
+        </table>
+    </div>
+
+</div>
+{% endblock %}

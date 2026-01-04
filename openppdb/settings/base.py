@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'corsheaders',  # CORS to bypass js access
     'whitenoise.runserver_nostatic',  # nostatic
     'backend.apps.BackendConfig',

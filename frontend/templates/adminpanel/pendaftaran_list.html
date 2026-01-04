@@ -42,7 +42,7 @@
             <label class="form-label small text-muted">Jurusan</label>
             <select name="jurusan" class="form-select">
                 <option value="">Semua</option>
-                {% for key, label in pendaftarans.paginator.object_list.model.JURUSAN_CHOICES %}
+                {% for key, label in pendaftarans.model.JURUSAN_CHOICES %}
                     <option value="{{ key }}" {% if jurusan_filter == key %}selected{% endif %}>
                         {{ label }}
                     </option>
@@ -68,7 +68,6 @@
 {% endblock %}
 
 {% block content %}
-
 <div class="card shadow-sm">
     <div class="card-body table-responsive">
 
@@ -88,24 +87,23 @@
             {% for p in pendaftarans %}
                 <tr>
                     <td class="text-center">
-                        {{ forloop.counter0|add:pendaftarans.start_index }}
+                        {{ forloop.counter0|add:page_obj.start_index }}
                     </td>
 
-                    <!-- NOMOR → DETAIL -->
                     <td>
                         <a href="{% url 'admin_pendaftaran_detail' p.nomor_pendaftaran %}"
-                        class="fw-bold text-decoration-none">
+                           class="fw-bold text-decoration-none">
                             {{ p.nomor_pendaftaran }}
                         </a>
                     </td>
 
                     <td>{{ p.nama_lengkap }}</td>
                     <td>{{ p.get_jurusan_display }}</td>
+
                     <td class="text-center">
                         {% include "adminpanel/partials/status_badge.html" with status=p.status %}
                     </td>
 
-                    <!-- AKSI -->
                     <td class="text-center">
                         <div class="d-flex justify-content-center gap-2 flex-wrap">
 
@@ -135,7 +133,6 @@
                         </div>
                     </td>
 
-                    <!-- PRINT -->
                     <td class="text-center">
                         <a href="{% url 'print_kartu' p.nomor_pendaftaran %}"
                            target="_blank"
@@ -160,6 +157,7 @@
 {% if page_obj.has_other_pages %}
 <nav class="mt-4">
     <ul class="pagination justify-content-center">
+
         {% if page_obj.has_previous %}
         <li class="page-item">
             <a class="page-link" href="?page={{ page_obj.previous_page_number }}">«</a>
@@ -183,8 +181,8 @@
             <a class="page-link" href="?page={{ page_obj.next_page_number }}">»</a>
         </li>
         {% endif %}
+
     </ul>
 </nav>
 {% endif %}
-
 {% endblock %}

@@ -1,0 +1,69 @@
+{% extends "adminpanel/base.html" %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="mb-0">💰 Daftar Ulang (Bendahara)</h3>
+    <a href="{% url 'admin_pendaftaran_detail' pendaftaran.nomor_pendaftaran %}"
+       class="btn btn-outline-secondary">
+        ⬅️ Kembali ke Detail
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+
+        <div class="card shadow-sm">
+            <div class="card-header fw-bold">
+                👤 {{ pendaftaran.nama_lengkap }}
+            </div>
+
+            <div class="card-body">
+
+                <table class="table table-sm table-borderless mb-3">
+                    <tr>
+                        <th width="40%">Nomor Pendaftaran</th>
+                        <td>{{ pendaftaran.nomor_pendaftaran }}</td>
+                    </tr>
+                    <tr>
+                        <th>Jurusan</th>
+                        <td>{{ pendaftaran.get_jurusan_display }}</td>
+                    </tr>
+                    <tr>
+                        <th>Status Saat Ini</th>
+                        <td>
+                            {% include "adminpanel/partials/status_badge.html" with status=pendaftaran.status %}
+                        </td>
+                    </tr>
+                </table>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">
+                                {{ field.label }}
+                            </label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="text-danger small">
+                                    {{ field.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="d-grid mt-4">
+                        <button class="btn btn-success btn-lg">
+                            ✅ Simpan Daftar Ulang
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

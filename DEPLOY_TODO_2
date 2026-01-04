@@ -1,0 +1,13 @@
+❌ PENYEBAB ERROR (FIXED POINT)
+
+Error kunci:
+
+TemplateSyntaxError: 'with' received an invalid token: '"name"'
+
+
+Sumbernya PASTI dari baris ini di template kamu:
+
+{% include "adminpanel/partials/status_badge.html" with status=pendaftaran.status %}
+
+
+❗ Django 2.2 TIDAK MENDUKUNG with DI {% include %}

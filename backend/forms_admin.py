@@ -1,6 +1,9 @@
 from django import forms
 from .forms import PendaftaranForm
-from .models import Pendaftaran
+from .models import (
+    Pendaftaran,
+    PembayaranDaftarUlang,
+)
 
 
 class AdminPendaftaranForm(PendaftaranForm):
@@ -8,7 +11,7 @@ class AdminPendaftaranForm(PendaftaranForm):
     FORM ADMIN
     = FORM PUBLIK
     + FIELD ADMIN
-    + ASAL SEKOLAH DROPDOWN + LAINNYA (FIX FINAL)
+    + ASAL SEKOLAH DROPDOWN + LAINNYA
     """
 
     ASAL_SEKOLAH_CHOICES = [
@@ -91,10 +94,19 @@ class AdminPendaftaranForm(PendaftaranForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # 🔥 BUANG ASAL SEKOLAH WARISAN FORM PUBLIK
+        # === FIX DATE PICKER (ADMIN ONLY) ===
+        if 'tanggal_lahir' in self.fields:
+            self.fields['tanggal_lahir'].widget = forms.DateInput(
+                attrs={
+                    'type': 'date',
+                    'class': 'form-control'
+                }
+            )
+
+        # HAPUS ASAL SEKOLAH FORM PUBLIK
         self.fields.pop('asal_sekolah', None)
 
-        # 🔥 PASANG ULANG VERSI ADMIN
+        # PASANG ULANG VERSI ADMIN
         self.fields['asal_sekolah'] = forms.ChoiceField(
             label="Asal Sekolah",
             choices=self.ASAL_SEKOLAH_CHOICES
@@ -104,13 +116,13 @@ class AdminPendaftaranForm(PendaftaranForm):
             required=False
         )
 
-        # 🔥 DATA LAMA → TETAP KEISI
+        # DATA LAMA TETAP AMAN
         if self.instance.pk and self.instance.asal_sekolah:
             if self.instance.asal_sekolah not in dict(self.ASAL_SEKOLAH_CHOICES):
                 self.initial['asal_sekolah'] = 'LAINNYA'
                 self.initial['asal_sekolah_lainnya'] = self.instance.asal_sekolah
 
-        # 🔥 FIX STYLING (CHECKBOX JANGAN FORM-CONTROL)
+        # STYLING
         for name, field in self.fields.items():
             if isinstance(field.widget, forms.CheckboxSelectMultiple):
                 field.widget.attrs.pop('class', None)
@@ -130,3 +142,51 @@ class AdminPendaftaranForm(PendaftaranForm):
                 cleaned['asal_sekolah'] = lain
 
         return cleaned
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+
+        # 🔒 JANGAN TURUNKAN STATUS JIKA SUDAH DAFTAR ULANG / LUNAS
+        if instance.pk:
+            old = Pendaftaran.objects.get(pk=instance.pk)
+            if old.status in ['daftar_ulang', 'lunas']:
+                instance.status = old.status
+
+        if commit:
+            instance.save()
+        return instance
+
+
+class KonfirmasiDaftarUlangForm(forms.ModelForm):
+    """
+    FORM KONFIRMASI STATUS DAFTAR ULANG
+    """
+    class Meta:
+        model = Pendaftaran
+        fields = ['status']
+
+
+class PembayaranDaftarUlangForm(forms.ModelForm):
+    """
+    FORM CICILAN DAFTAR ULANG
+    """
+
+    class Meta:
+        model = PembayaranDaftarUlang
+        fields = ['nominal', 'keterangan']
+        widgets = {
+            'nominal': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Nominal pembayaran'
+            }),
+            'keterangan': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Contoh: Cicilan 1'
+            }),
+        }
+
+    def clean_nominal(self):
+        nominal = self.cleaned_data.get('nominal')
+        if nominal is not None and nominal <= 0:
+            raise forms.ValidationError("Nominal harus lebih dari 0.")
+        return nominal

@@ -1,18 +1,26 @@
 {% extends "adminpanel/base.html" %}
+{% load humanize %}
 {% block content %}
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h3 class="mb-0">📄 Detail Pendaftaran</h3>
     <div class="d-flex gap-2">
-        <a href="{% url 'admin_pendaftaran_edit' pendaftaran.pk %}" class="btn btn-warning">
+
+        {% if not is_bendahara %}
+        <a href="{% url 'admin_pendaftaran_edit' pendaftaran.pk %}"
+           class="btn btn-warning">
             ✏️ Edit
         </a>
+        {% endif %}
+
         <a href="{% url 'print_kartu' pendaftaran.nomor_pendaftaran %}"
            target="_blank"
            class="btn btn-primary">
             🖨️ Print
         </a>
-        <a href="{% url 'admin_pendaftaran_list' %}" class="btn btn-outline-secondary">
+
+        <a href="{% url 'admin_pendaftaran_list' %}"
+           class="btn btn-outline-secondary">
             ⬅️ Kembali
         </a>
     </div>
@@ -20,63 +28,43 @@
 
 <div class="row g-4">
 
-    <!-- ================= DATA PENDAFTAR ================= -->
+    <!-- DATA PENDAFTAR -->
     <div class="col-md-6">
         <div class="card shadow-sm">
             <div class="card-header fw-bold">👤 Data Pendaftar</div>
             <div class="card-body">
                 <table class="table table-borderless mb-0">
+                    <tr><th width="40%">Nomor Pendaftaran</th><td>{{ pendaftaran.nomor_pendaftaran }}</td></tr>
+                    <tr><th>Nama Lengkap</th><td>{{ pendaftaran.nama_lengkap }}</td></tr>
+                    <tr><th>NIK</th><td>{{ pendaftaran.nik }}</td></tr>
+                    <tr><th>Tempat Lahir</th><td>{{ pendaftaran.tempat_lahir }}</td></tr>
+                    <tr><th>Tanggal Lahir</th><td>{{ pendaftaran.tanggal_lahir|date:"d F Y" }}</td></tr>
                     <tr>
-                        <th width="40%">Nomor Pendaftaran</th>
-                        <td>{{ pendaftaran.nomor_pendaftaran }}</td>
-                    </tr>
-                    <tr>
-                        <th>Nama Lengkap</th>
-                        <td>{{ pendaftaran.nama_lengkap }}</td>
-                    </tr>
-                    <tr>
-                        <th>NIK</th>
-                        <td>{{ pendaftaran.nik }}</td>
-                    </tr>
-                    <tr>
-                        <th>Jenis Kelamin</th>
-                        <td>{{ pendaftaran.get_jenis_kelamin_display }}</td>
-                    </tr>
-                    <tr>
-                        <th>Tanggal Lahir</th>
-                        <td>{{ pendaftaran.tanggal_lahir|date:"d F Y" }}</td>
-                    </tr>
-                    <tr>
-                        <th>Alamat</th>
-                        <td>{{ pendaftaran.alamat_lengkap }}</td>
+                        <th>Alamat Lengkap</th>
+                        <td>
+                            Dusun {{ pendaftaran.dusun|default:"-" }},
+                            RT {{ pendaftaran.rt|default:"-" }} /
+                            RW {{ pendaftaran.rw|default:"-" }},
+                            Desa {{ pendaftaran.desa_kelurahan }},
+                            Kecamatan {{ pendaftaran.kecamatan }},
+                            {{ pendaftaran.kabupaten_kota }}
+                        </td>
                     </tr>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- ================= DATA AKADEMIK ================= -->
+    <!-- DATA AKADEMIK -->
     <div class="col-md-6">
         <div class="card shadow-sm">
             <div class="card-header fw-bold">🎓 Data Akademik</div>
             <div class="card-body">
                 <table class="table table-borderless mb-0">
-                    <tr>
-                        <th width="40%">Jurusan</th>
-                        <td>{{ pendaftaran.get_jurusan_display }}</td>
-                    </tr>
-                    <tr>
-                        <th>Asal Sekolah</th>
-                        <td>{{ pendaftaran.asal_sekolah }}</td>
-                    </tr>
-                    <tr>
-                        <th>NISN</th>
-                        <td>{{ pendaftaran.nisn|default:"-" }}</td>
-                    </tr>
-                    <tr>
-                        <th>Nilai SKL</th>
-                        <td>{{ pendaftaran.nilai_skl|default:"-" }}</td>
-                    </tr>
+                    <tr><th width="40%">Jurusan</th><td>{{ pendaftaran.get_jurusan_display }}</td></tr>
+                    <tr><th>Asal Sekolah</th><td>{{ pendaftaran.asal_sekolah }}</td></tr>
+                    <tr><th>NISN</th><td>{{ pendaftaran.nisn|default:"-" }}</td></tr>
+                    <tr><th>Nilai SKL</th><td>{{ pendaftaran.nilai_skl|default:"-" }}</td></tr>
                     <tr>
                         <th>Status</th>
                         <td>
@@ -92,20 +80,16 @@
         </div>
     </div>
 
-    <!-- ================= DATA ORANG TUA ================= -->
+    <!-- DATA ORANG TUA -->
     <div class="col-md-12">
         <div class="card shadow-sm">
             <div class="card-header fw-bold">👨‍👩‍👧 Data Orang Tua & Keringanan</div>
             <div class="card-body">
                 <table class="table table-borderless mb-0">
-                    <tr>
-                        <th width="25%">Pekerjaan Ayah</th>
-                        <td>{{ pendaftaran.pekerjaan_ayah|default:"-" }}</td>
-                    </tr>
-                    <tr>
-                        <th>Pekerjaan Ibu</th>
-                        <td>{{ pendaftaran.pekerjaan_ibu|default:"-" }}</td>
-                    </tr>
+                    <tr><th width="25%">Nama Ayah</th><td>{{ pendaftaran.nama_ayah|default:"-" }}</td></tr>
+                    <tr><th>Nama Ibu</th><td>{{ pendaftaran.nama_ibu|default:"-" }}</td></tr>
+                    <tr><th>Pekerjaan Ayah</th><td>{{ pendaftaran.pekerjaan_ayah|default:"-" }}</td></tr>
+                    <tr><th>Pekerjaan Ibu</th><td>{{ pendaftaran.pekerjaan_ibu|default:"-" }}</td></tr>
                     <tr>
                         <th>Keringanan / Prestasi</th>
                         <td>{{ pendaftaran.keringanan_prestasi|default:"-" }}</td>
@@ -115,6 +99,88 @@
         </div>
     </div>
 
-</div>
+    <!-- DAFTAR ULANG (BENDAHARA ONLY) -->
+    {% if is_bendahara and pendaftaran.status != 'terdaftar' %}
+    <div class="col-md-12">
+        <div class="card shadow-sm border-success">
+            <div class="card-header fw-bold bg-success text-white">
+                💰 Daftar Ulang (Bendahara)
+            </div>
+            <div class="card-body">
 
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <div class="alert alert-secondary mb-0">
+                            <strong>Total Biaya</strong><br>
+                            Rp {{ biaya_daftar_ulang|intcomma }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="alert alert-info mb-0">
+                            <strong>Total Dibayar</strong><br>
+                            Rp {{ total_bayar|intcomma }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        {% if sisa <= 0 %}
+                            <div class="alert alert-success mb-0">
+                                <strong>Status</strong><br>
+                                ✅ LUNAS
+                            </div>
+                        {% else %}
+                            <div class="alert alert-warning mb-0">
+                                <strong>Sisa Bayar</strong><br>
+                                Rp {{ sisa|intcomma }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if pendaftaran.pembayaran_daftar_ulang.exists %}
+                <table class="table table-sm mb-4">
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Nominal</th>
+                            <th>Keterangan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for bayar in pendaftaran.pembayaran_daftar_ulang.all %}
+                        <tr>
+                            <td>{{ bayar.tanggal|date:"d F Y" }}</td>
+                            <td>Rp {{ bayar.nominal|intcomma }}</td>
+                            <td>{{ bayar.keterangan|default:"-" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
+
+                {% if sisa > 0 %}
+                <form method="post"
+                      action="{% url 'bendahara_daftar_ulang' pendaftaran.pk %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nominal Pembayaran</label>
+                        <input type="number" name="nominal" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Keterangan</label>
+                        <input type="text" name="keterangan" class="form-control">
+                    </div>
+                    <button class="btn btn-success">💾 Simpan Pembayaran</button>
+                </form>
+                {% else %}
+                <div class="alert alert-success text-center mb-0">
+                    🎉 Pembayaran daftar ulang sudah <strong>LUNAS</strong>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
 {% endblock %}

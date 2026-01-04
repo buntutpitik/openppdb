@@ -1,9 +1,27 @@
+{# adminpanel/partials/status_badge.html #}
+
 {% if status == 'terdaftar' %}
-    <span class="badge bg-secondary">Terdaftar</span>
+    <span class="badge bg-secondary">
+        Terdaftar
+    </span>
+
 {% elif status == 'diterima' %}
-    <span class="badge bg-success">Diterima</span>
+    <span class="badge bg-success">
+        Diterima
+    </span>
+
 {% elif status == 'ditolak' %}
-    <span class="badge bg-danger">Ditolak</span>
+    <span class="badge bg-danger">
+        Ditolak
+    </span>
+
+{% elif status == 'daftar_ulang' %}
+    <span class="badge bg-primary">
+        Daftar Ulang
+    </span>
+
 {% else %}
-    <span class="badge bg-dark">{{ status }}</span>
+    <span class="badge bg-dark">
+        {{ status }}
+    </span>
 {% endif %}
