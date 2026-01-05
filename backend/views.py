@@ -99,7 +99,7 @@ def print_kartu(request, nomor_pendaftaran):
 # ADMIN PANEL
 # =====================================================
 @login_required
-@role_required('SUPERADMIN', 'ADMIN', 'PANITIA')
+@role_required('SUPERADMIN', 'ADMIN', 'PANITIA', 'BENDAHARA')
 def dashboard_admin(request):
     qs = Pendaftaran.objects.all()
 
@@ -113,7 +113,7 @@ def dashboard_admin(request):
 
 
 @login_required
-@role_required('SUPERADMIN', 'ADMIN', 'PANITIA')
+@role_required('SUPERADMIN', 'ADMIN', 'PANITIA', 'BENDAHARA')
 def admin_pendaftaran_list(request):
     status_filter = request.GET.get('status')
     jurusan_filter = request.GET.get('jurusan')
@@ -147,7 +147,7 @@ def admin_pendaftaran_list(request):
 
 
 @login_required
-@role_required('SUPERADMIN', 'ADMIN', 'PANITIA')
+@role_required('SUPERADMIN', 'ADMIN', 'PANITIA', 'BENDAHARA')
 def admin_pendaftaran_tambah(request):
     if request.method == 'POST':
         form = AdminPendaftaranForm(request.POST)
@@ -251,7 +251,7 @@ def admin_pendaftaran_export_excel(request):
     return response
 
 @login_required
-@role_required('SUPERADMIN', 'ADMIN')
+@role_required('SUPERADMIN', 'ADMIN', 'PANITIA', 'BENDAHARA')
 def admin_pendaftaran_edit(request, pk):
     pendaftaran = get_object_or_404(Pendaftaran, pk=pk)
 
@@ -276,7 +276,7 @@ def admin_pendaftaran_edit(request, pk):
 # 🔧 FIX ERROR URL: UBAH STATUS ADMIN
 # =====================================================
 @login_required
-@role_required('SUPERADMIN', 'ADMIN')
+@role_required('SUPERADMIN', 'ADMIN', 'PANITIA', 'BENDAHARA')
 @require_POST
 def ubah_status_admin(request, pk):
     """
@@ -356,7 +356,7 @@ def admin_pendaftaran_detail(request, nomor):
 # DAFTAR ULANG
 # =====================================================
 @login_required
-@role_required('SUPERADMIN', 'ADMIN', 'BENDAHARA')
+@role_required('SUPERADMIN', 'BENDAHARA')
 @require_POST
 def bendahara_daftar_ulang(request, pk):
     pendaftaran = get_object_or_404(Pendaftaran, pk=pk)

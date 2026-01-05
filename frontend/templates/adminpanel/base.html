@@ -150,6 +150,14 @@
                 <span class="menu-text">Data Pendaftaran</span>
             </a>
 
+            <!-- ✅ REKAP ASAL SEKOLAH -->
+            <a href="{% url 'rekap_asal_sekolah' %}"
+               class="list-group-item list-group-item-action
+               {% if request.resolver_match.url_name == 'rekap_asal_sekolah' %}active{% endif %}">
+                <i class="bi bi-building me-2"></i>
+                <span class="menu-text">Rekap Asal Sekolah</span>
+            </a>
+
         </div>
     </aside>
 

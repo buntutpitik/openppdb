@@ -1,0 +1,19 @@
+{% extends "super_admin/base.html" %}
+
+{% block content %}
+<h2>Buat User Baru</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">
+        Simpan
+    </button>
+</form>
+
+<a href="{% url 'superadmin:user_list' %}">
+    ← Kembali ke daftar user
+</a>
+{% endblock %}

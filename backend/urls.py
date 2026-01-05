@@ -1,5 +1,6 @@
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
+from .rekap_asal_sekolah import rekap_asal_sekolah
 from . import views
 
 urlpatterns = [
@@ -76,6 +77,13 @@ urlpatterns = [
         name='ubah_status_admin'
     ),
 
+    path(
+        "admin/rekap-asal-sekolah/",
+        rekap_asal_sekolah,
+        name="rekap_asal_sekolah"
+    ),
+    
+    
     # ======================
     # BENDAHARA
     # ======================

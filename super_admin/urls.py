@@ -5,6 +5,7 @@ from super_admin.views.user_list import (
     user_list,
     toggle_user_active,
 )
+from super_admin.views.user_create import user_create
 from super_admin.views.user_role_update import update_user_role
 
 app_name = "superadmin"
@@ -39,4 +40,11 @@ urlpatterns = [
         toggle_user_active,
         name="toggle_user_active"
     ),
+
+    path(
+        "users/create/",
+        user_create,
+        name="user_create"
+    ),
+
 ]

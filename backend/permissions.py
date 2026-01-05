@@ -49,3 +49,28 @@ def role_required(*allowed_roles):
         return _wrapped_view
 
     return decorator
+
+
+# ==================================================
+# SHORTCUT DECORATOR (BIAR VIEW RAPI)
+# ==================================================
+
+def superadmin_required(view_func):
+    """
+    Khusus SUPERADMIN saja
+    """
+    return role_required('SUPERADMIN')(view_func)
+
+
+def bendahara_required(view_func):
+    """
+    BENDAHARA (termasuk kalau dia juga PANITIA)
+    """
+    return role_required('BENDAHARA')(view_func)
+
+
+def panitia_required(view_func):
+    """
+    PANITIA (atau role lain yang diizinkan)
+    """
+    return role_required('PANITIA')(view_func)

@@ -24,7 +24,7 @@
         {% for user in users %}
         <tr>
             <td>{{ user.username }}</td>
-            <td>{{ user.email }}</td>
+            <td>{{ user.email|default:"-" }}</td>
             <td>{{ user.is_active }}</td>
 
             <!-- ROLE SAAT INI -->
@@ -36,42 +36,70 @@
                 {% endfor %}
             </td>
 
-            <!-- FORM UBAH ROLE -->
+            <!-- FORM UBAH ROLE (MULTI ROLE) -->
             <td>
                 <form
                     method="post"
                     action="{% url 'superadmin:update_user_role' user.id %}"
                 >
                     {% csrf_token %}
-                    <select name="role" required>
-                        <option value="">-- pilih --</option>
-                        <option value="SUPERADMIN">SUPERADMIN</option>
-                        <option value="ADMIN">ADMIN</option>
-                        <option value="PANITIA">PANITIA</option>
-                        <option value="BENDAHARA">BENDAHARA</option>
-                    </select>
-                    <button type="submit">Simpan</button>
+
+                    <label>
+                        <input type="checkbox" name="roles"
+                               value="SUPERADMIN"
+                               {% if 'SUPERADMIN' in user.groups.values_list 'name' %}checked{% endif %}>
+                        SUPERADMIN
+                    </label><br>
+
+                    <label>
+                        <input type="checkbox" name="roles"
+                               value="ADMIN"
+                               {% if 'ADMIN' in user.groups.values_list 'name' %}checked{% endif %}>
+                        ADMIN
+                    </label><br>
+
+                    <label>
+                        <input type="checkbox" name="roles"
+                               value="PANITIA"
+                               {% if 'PANITIA' in user.groups.values_list 'name' %}checked{% endif %}>
+                        PANITIA
+                    </label><br>
+
+                    <label>
+                        <input type="checkbox" name="roles"
+                               value="BENDAHARA"
+                               {% if 'BENDAHARA' in user.groups.values_list 'name' %}checked{% endif %}>
+                        BENDAHARA
+                    </label><br>
+
+                    <button type="submit">
+                        Simpan Role
+                    </button>
                 </form>
             </td>
 
             <!-- TOGGLE AKTIF / NONAKTIF -->
             <td>
-                <form
-                    method="post"
-                    action="{% url 'superadmin:toggle_user_active' user.id %}"
-                    style="display:inline;"
-                >
-                    {% csrf_token %}
-                    {% if user.is_active %}
-                        <button type="submit">
-                            Nonaktifkan
-                        </button>
-                    {% else %}
-                        <button type="submit">
-                            Aktifkan
-                        </button>
-                    {% endif %}
-                </form>
+                {% if user != request.user %}
+                    <form
+                        method="post"
+                        action="{% url 'superadmin:toggle_user_active' user.id %}"
+                        style="display:inline;"
+                    >
+                        {% csrf_token %}
+                        {% if user.is_active %}
+                            <button type="submit">
+                                Nonaktifkan
+                            </button>
+                        {% else %}
+                            <button type="submit">
+                                Aktifkan
+                            </button>
+                        {% endif %}
+                    </form>
+                {% else %}
+                    <em>(akun sendiri)</em>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}
