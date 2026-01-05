@@ -169,9 +169,6 @@ class Pendaftaran(models.Model):
 
         super().save(*args, **kwargs)
 
-    # =====================
-    # PROPERTY PEMBAYARAN
-    # =====================
     @property
     def total_bayar(self):
         return self.pembayaran_daftar_ulang.aggregate(
@@ -205,7 +202,6 @@ class PembayaranDaftarUlang(models.Model):
     )
 
     tanggal = models.DateField(auto_now_add=True)
-
     nominal = models.PositiveIntegerField()
 
     petugas = models.ForeignKey(
@@ -224,7 +220,7 @@ class PembayaranDaftarUlang(models.Model):
 
 
 # =========================
-# MODEL LOG AKTIVITAS
+# LOG AKTIVITAS PENDAFTARAN (EXISTING)
 # =========================
 class LogAktivitas(models.Model):
 
@@ -246,3 +242,49 @@ class LogAktivitas(models.Model):
 
     class Meta:
         ordering = ['-timestamp']
+
+
+# =========================
+# LOG AKTIVITAS GLOBAL (SUPERADMIN)
+# =========================
+class ActivityLog(models.Model):
+    """
+    Log audit global (user management, permission, dsb).
+    Append-only.
+    """
+
+    ACTION_CHOICES = (
+        ("TOGGLE_USER_ACTIVE", "Toggle User Active"),
+        ("UPDATE_USER_ROLE", "Update User Role"),
+    )
+
+    actor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="global_activity_logs"
+    )
+
+    action = models.CharField(
+        max_length=50,
+        choices=ACTION_CHOICES
+    )
+
+    target_username = models.CharField(
+        max_length=150,
+        blank=True
+    )
+
+    note = models.TextField(
+        blank=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.action} by {self.actor}"

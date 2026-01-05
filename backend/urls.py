@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from . import views
 
@@ -94,5 +94,14 @@ urlpatterns = [
         views.export_rekap_daftar_ulang_excel,
         name='export_rekap_daftar_ulang_excel'
     ),
+
+    # ======================
+    # SUPER ADMIN
+    # ======================
+    path(
+        'superadmin/',
+        include('super_admin.urls')
+    ),
+
 
 ]

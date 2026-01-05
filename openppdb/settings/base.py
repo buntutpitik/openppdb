@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',  # nostatic
     'backend.apps.BackendConfig',
     'frontend',
+    
+    'super_admin',
 ]
 
 MIDDLEWARE = [

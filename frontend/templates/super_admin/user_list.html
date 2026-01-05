@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>User Management</title>
+</head>
+<body>
+
+<h1>User Management</h1>
+
+<table border="1" cellpadding="6">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Aktif</th>
+            <th>Role Saat Ini</th>
+            <th>Ubah Role</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.is_active }}</td>
+
+            <!-- ROLE SAAT INI -->
+            <td>
+                {% for g in user.groups.all %}
+                    {{ g.name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    -
+                {% endfor %}
+            </td>
+
+            <!-- FORM UBAH ROLE -->
+            <td>
+                <form
+                    method="post"
+                    action="{% url 'superadmin:update_user_role' user.id %}"
+                >
+                    {% csrf_token %}
+                    <select name="role" required>
+                        <option value="">-- pilih --</option>
+                        <option value="SUPERADMIN">SUPERADMIN</option>
+                        <option value="ADMIN">ADMIN</option>
+                        <option value="PANITIA">PANITIA</option>
+                        <option value="BENDAHARA">BENDAHARA</option>
+                    </select>
+                    <button type="submit">Simpan</button>
+                </form>
+            </td>
+
+            <!-- TOGGLE AKTIF / NONAKTIF -->
+            <td>
+                <form
+                    method="post"
+                    action="{% url 'superadmin:toggle_user_active' user.id %}"
+                    style="display:inline;"
+                >
+                    {% csrf_token %}
+                    {% if user.is_active %}
+                        <button type="submit">
+                            Nonaktifkan
+                        </button>
+                    {% else %}
+                        <button type="submit">
+                            Aktifkan
+                        </button>
+                    {% endif %}
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p>
+    <a href="{% url 'superadmin:dashboard' %}">
+        ← Kembali ke Dashboard
+    </a>
+</p>
+
+</body>
+</html>
