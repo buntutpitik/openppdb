@@ -8,6 +8,8 @@ from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.db.models import Q, Sum
 from django.http import HttpResponse
+from backend.models import ActivityLog
+
 
 from .forms import PendaftaranForm
 from .forms_admin import (
@@ -146,6 +148,8 @@ def admin_pendaftaran_list(request):
     })
 
 
+from backend.models import ActivityLog
+
 @login_required
 @role_required('SUPERADMIN', 'ADMIN', 'PANITIA', 'BENDAHARA')
 def admin_pendaftaran_tambah(request):
@@ -153,6 +157,18 @@ def admin_pendaftaran_tambah(request):
         form = AdminPendaftaranForm(request.POST)
         if form.is_valid():
             pendaftaran = form.save()
+
+            # =========================
+            # LOG AKTIVITAS
+            # =========================
+            ActivityLog.objects.create(
+                actor=request.user,
+                action="CREATE",
+                target="Pendaftaran",
+                note=f"Tambah pendaftaran {pendaftaran.nomor_pendaftaran}",
+                ip_address=request.META.get("REMOTE_ADDR"),
+            )
+
             messages.success(request, "Pendaftaran berhasil ditambahkan")
             return redirect(
                 'admin_pendaftaran_detail',
@@ -165,6 +181,7 @@ def admin_pendaftaran_tambah(request):
         'form': form,
         'mode': 'tambah',
     })
+
 
 
 @login_required
@@ -248,6 +265,15 @@ def admin_pendaftaran_export_excel(request):
     response["Content-Disposition"] = 'attachment; filename="data_pendaftaran_lengkap.xlsx"'
     wb.save(response)
 
+    ActivityLog.objects.create(
+        actor=request.user,
+        action="EXPORT_DATA",
+        target="Data Pendaftaran",
+        note="Export Excel data pendaftaran",
+        ip_address=request.META.get("REMOTE_ADDR")
+    )
+
+
     return response
 
 @login_required
@@ -259,6 +285,18 @@ def admin_pendaftaran_edit(request, pk):
         form = AdminPendaftaranForm(request.POST, instance=pendaftaran)
         if form.is_valid():
             form.save()
+
+            # =========================
+            # LOG AKTIVITAS
+            # =========================
+            ActivityLog.objects.create(
+                actor=request.user,
+                action="UPDATE",
+                target="Pendaftaran",
+                note=f"Edit pendaftaran {pendaftaran.nomor_pendaftaran}",
+                ip_address=request.META.get("REMOTE_ADDR"),
+            )
+
             messages.success(request, "Data pendaftaran berhasil diperbarui.")
             return redirect('admin_pendaftaran_list')
     else:

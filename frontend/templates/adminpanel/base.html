@@ -146,6 +146,13 @@
                 <span class="menu-text">Dashboard</span>
             </a>
 
+            <a href="{% url 'superadmin:dashboard' %}"
+                class="list-group-item list-group-item-action
+                {% if request.resolver_match.namespace == 'superadmin' %}active{% endif %}">
+                <i class="bi bi-shield-lock me-2"></i>
+                <span class="menu-text">Kawasan Terlarang</span>
+            </a>
+
             <a href="{% url 'admin_pendaftaran_list' %}"
                class="list-group-item list-group-item-action
                {% if request.resolver_match.url_name == 'admin_pendaftaran_list' %}active{% endif %}">

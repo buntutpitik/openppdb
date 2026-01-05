@@ -10,6 +10,8 @@ from backend.permissions import admin_required
 @login_required
 @admin_required
 def export_rekap_asal_sekolah_excel(request):
+
+    print("=== STEP 1: EXPORT VIEW MASUK ===")
     # ==========================
     # QUERY REKAP
     # ==========================
@@ -38,6 +40,7 @@ def export_rekap_asal_sekolah_excel(request):
             row["total"]
         ])
 
+    print("=== STEP 2: SEBELUM LOG CREATE ===")
     # ==========================
     # LOG AKTIVITAS
     # ==========================
@@ -48,7 +51,7 @@ def export_rekap_asal_sekolah_excel(request):
         note="Export Excel rekap asal sekolah",
         ip_address=request.META.get("REMOTE_ADDR")
     )
-
+    print("=== STEP 3: SETELAH LOG CREATE ===")
     # ==========================
     # RESPONSE DOWNLOAD
     # ==========================
