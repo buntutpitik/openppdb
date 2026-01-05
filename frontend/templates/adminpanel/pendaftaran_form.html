@@ -53,9 +53,9 @@
             <form method="post" novalidate>
                 {% csrf_token %}
 
-                {# ===== FIELD BIASA ===== #}
+                {# ===== FIELD UMUM ===== #}
                 {% for field in form %}
-                    {% if field.name not in 'asal_sekolah asal_sekolah_lainnya' %}
+                    {% if field.name not in 'asal_sekolah asal_sekolah_lainnya keringanan_prestasi' %}
                         <div class="mb-3">
                             <label class="form-label fw-semibold">{{ field.label }}</label>
                             {{ field }}
@@ -81,9 +81,28 @@
                         {{ form.asal_sekolah_lainnya.label }}
                     </label>
                     {{ form.asal_sekolah_lainnya }}
-                    {% if form.asal_sekolah_lainnya.errors %}
-                        <div class="text-danger small">
-                            {{ form.asal_sekolah_lainnya.errors|striptags }}
+                </div>
+
+                {# ===== KERINGANAN / PRESTASI ===== #}
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">
+                        {{ form.keringanan_prestasi.label }}
+                    </label>
+
+                    <div class="border rounded p-3 bg-light">
+                        {% for checkbox in form.keringanan_prestasi %}
+                            <div class="form-check mb-2">
+                                {{ checkbox }}
+                                <label class="form-check-label ms-1">
+                                    {{ checkbox.choice_label }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    {% if form.keringanan_prestasi.errors %}
+                        <div class="text-danger small mt-1">
+                            {{ form.keringanan_prestasi.errors|striptags }}
                         </div>
                     {% endif %}
                 </div>

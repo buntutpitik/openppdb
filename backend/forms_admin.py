@@ -48,6 +48,34 @@ class AdminPendaftaranForm(PendaftaranForm):
         ('LAINNYA', 'LAINNYA'),
     ]
 
+    # =================================================
+    # OVERRIDE FIELD PUBLIK (ADMIN VERSION)
+    # =================================================
+    asal_sekolah = forms.ChoiceField(
+        label="Asal Sekolah",
+        choices=ASAL_SEKOLAH_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+    asal_sekolah_lainnya = forms.CharField(
+        label="Asal Sekolah (Lainnya)",
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
+    tanggal_lahir = forms.DateField(
+        label="Tanggal Lahir",
+        widget=forms.DateInput(
+            attrs={
+                "type": "date",
+                "class": "form-control"
+            }
+        )
+    )
+
+    # =================================================
+    # FIELD KHUSUS ADMIN
+    # =================================================
     KERINGANAN_CHOICES = [
         ('yatim', 'Yatim'),
         ('yatim_piatu', 'Yatim Piatu'),
@@ -63,6 +91,7 @@ class AdminPendaftaranForm(PendaftaranForm):
     nilai_skl = forms.DecimalField(label="Nilai SKL", required=False)
 
     keringanan_prestasi = forms.MultipleChoiceField(
+        label="Keringanan / Prestasi",
         choices=KERINGANAN_CHOICES,
         required=False,
         widget=forms.CheckboxSelectMultiple
@@ -75,11 +104,24 @@ class AdminPendaftaranForm(PendaftaranForm):
     class Meta:
         model = Pendaftaran
         fields = list(PendaftaranForm.Meta.fields) + [
+            'asal_sekolah_lainnya',
             'nisn',
             'nilai_skl',
             'keringanan_prestasi',
             'status',
         ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # 🔥 FIX UTAMA CHECKBOX
+        self.fields['keringanan_prestasi'].widget.attrs.pop('class', None)
+
+    def clean(self):
+        cleaned = super().clean()
+        if cleaned.get('asal_sekolah') == 'LAINNYA':
+            cleaned['asal_sekolah'] = cleaned.get('asal_sekolah_lainnya')
+        return cleaned
 
 
 # =====================================================
@@ -101,7 +143,7 @@ class PembayaranDaftarUlangForm(forms.ModelForm):
 
 
 # =====================================================
-# ✅ FORM CREATE USER (SUPERADMIN)
+# FORM CREATE USER (SUPERADMIN)
 # =====================================================
 ROLE_NAMES = [
     "SUPERADMIN",

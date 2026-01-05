@@ -74,3 +74,10 @@ def panitia_required(view_func):
     PANITIA (atau role lain yang diizinkan)
     """
     return role_required('PANITIA')(view_func)
+
+def admin_required(view_func):
+    """
+    SUPERADMIN & ADMIN
+    """
+    return role_required('SUPERADMIN', 'ADMIN')(view_func)
+

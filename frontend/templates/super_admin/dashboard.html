@@ -1,17 +1,41 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title>Super Admin Dashboard</title>
-</head>
-<body>
-    <h1>Super Admin Dashboard</h1>
+{% extends "super_admin/base.html" %}
 
-    <p>Selamat datang, {{ request.user.username }}</p>
+{% block title %}Dashboard Super Admin{% endblock %}
 
-    <ul>
-        <li>User Management (soon)</li>
-        <li>Log Aktivitas (soon)</li>
-    </ul>
-</body>
-</html>
+{% block content %}
+<h3 class="mb-4">Dashboard Super Admin</h3>
+
+<div class="row">
+
+    <div class="col-md-4">
+        <div class="card border-primary mb-3">
+            <div class="card-body">
+                <h5 class="card-title">User Management</h5>
+                <p class="card-text">
+                    Kelola user, role, dan status aktif.
+                </p>
+                <a href="{% url 'superadmin:user_list' %}"
+                   class="btn btn-primary btn-sm">
+                    Kelola User
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-secondary mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Log Aktivitas</h5>
+                <p class="card-text">
+                    Lihat aktivitas penting sistem.
+                </p>
+                <a href="{% url 'superadmin:activity_log' %}"
+                   class="btn btn-secondary btn-sm">
+                    Lihat Log
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

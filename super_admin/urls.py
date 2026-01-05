@@ -1,5 +1,5 @@
 from django.urls import path
-
+from super_admin.views.activity_log import activity_log_list
 from super_admin.views.dashboard import dashboard
 from super_admin.views.user_list import (
     user_list,
@@ -45,6 +45,12 @@ urlpatterns = [
         "users/create/",
         user_create,
         name="user_create"
+    ),
+
+     path(
+        "activity-log/",
+        activity_log_list,
+        name="activity_log"
     ),
 
 ]

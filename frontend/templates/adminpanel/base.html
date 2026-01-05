@@ -125,6 +125,7 @@
         </button>
         <span class="text-white">
             <i class="bi bi-person-circle"></i> {{ request.user.username }}
+            <small class="ms-2">( {{ request.user.profile.role }} )</small>
         </span>
         <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm">Logout</a>
     </div>
@@ -133,8 +134,10 @@
 <div class="layout">
 
     <!-- SIDEBAR -->
-    <aside id="sidebar" class="sidebar p-2">
-        <div class="list-group list-group-flush">
+<aside id="sidebar" class="sidebar p-2">
+    <div class="list-group list-group-flush">
+
+        {% if request.user.is_authenticated %}
 
             <a href="{% url 'dashboard_admin' %}"
                class="list-group-item list-group-item-action
@@ -150,7 +153,6 @@
                 <span class="menu-text">Data Pendaftaran</span>
             </a>
 
-            <!-- ✅ REKAP ASAL SEKOLAH -->
             <a href="{% url 'rekap_asal_sekolah' %}"
                class="list-group-item list-group-item-action
                {% if request.resolver_match.url_name == 'rekap_asal_sekolah' %}active{% endif %}">
@@ -158,8 +160,20 @@
                 <span class="menu-text">Rekap Asal Sekolah</span>
             </a>
 
-        </div>
-    </aside>
+            <a href="{% url 'rekap_daftar_ulang' %}"
+                class="list-group-item list-group-item-action
+                {% if request.resolver_match.url_name == 'rekap_daftar_ulang' %}active{% endif %}">
+                <i class="bi bi-cash-stack me-2"></i>
+                <span class="menu-text">Rekap Daftar Ulang</span>
+            </a>
+
+
+        {% endif %}
+
+    </div>
+</aside>
+
+
 
     <!-- CONTENT -->
     <main class="content-wrapper">

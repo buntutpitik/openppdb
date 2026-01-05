@@ -7,6 +7,19 @@
         Rekap Asal Sekolah
     </h3>
 
+    {# ============================= #}
+    {# TOMBOL EXPORT EXCEL           #}
+    {# SUPERADMIN & ADMIN SAJA       #}
+    {# ============================= #}
+    {% if user.is_authenticated and user.profile.role in 'SUPERADMIN ADMIN' %}
+        <div class="mb-3">
+            <a href="{% url 'export_rekap_asal_sekolah_excel' %}"
+               class="btn btn-success btn-sm">
+                Export Excel
+            </a>
+        </div>
+    {% endif %}
+
     <div class="table-responsive">
         <table class="table table-bordered table-striped align-middle">
             <thead class="table-dark">

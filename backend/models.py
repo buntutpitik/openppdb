@@ -249,13 +249,17 @@ class LogAktivitas(models.Model):
 # =========================
 class ActivityLog(models.Model):
     """
-    Log audit global (user management, permission, dsb).
+    Log audit global (SUPERADMIN).
     Append-only.
     """
 
     ACTION_CHOICES = (
         ("TOGGLE_USER_ACTIVE", "Toggle User Active"),
         ("UPDATE_USER_ROLE", "Update User Role"),
+        ("EXPORT_DATA", "Export Data"),
+        ("LOGIN", "Login"),
+        ("LOGOUT", "Logout"),
+        ("OTHER", "Other"),
     )
 
     actor = models.ForeignKey(
@@ -270,21 +274,30 @@ class ActivityLog(models.Model):
         choices=ACTION_CHOICES
     )
 
+    # FIELD LAMA — JANGAN DIHAPUS
     target_username = models.CharField(
         max_length=150,
         blank=True
     )
 
-    note = models.TextField(
+    # FIELD BARU — GENERIK
+    target = models.CharField(
+        max_length=255,
         blank=True
     )
 
-    created_at = models.DateTimeField(
-        auto_now_add=True
+    note = models.TextField(blank=True)
+
+    ip_address = models.GenericIPAddressField(
+        null=True,
+        blank=True
     )
+
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ["-created_at"]
 
     def __str__(self):
         return f"{self.action} by {self.actor}"
+

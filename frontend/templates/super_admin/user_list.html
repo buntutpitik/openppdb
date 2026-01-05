@@ -23,79 +23,67 @@
     <tbody>
         {% for user in users %}
         <tr>
-            <td>{{ user.username }}</td>
-            <td>{{ user.email|default:"-" }}</td>
-            <td>{{ user.is_active }}</td>
+            <td>{{ user.user.username }}</td>
+            <td>{{ user.user.email|default:"-" }}</td>
+            <td>{{ user.user.is_active }}</td>
 
             <!-- ROLE SAAT INI -->
             <td>
-                {% for g in user.groups.all %}
-                    {{ g.name }}{% if not forloop.last %}, {% endif %}
-                {% empty %}
+                {% if user.roles %}
+                    {{ user.roles|join:", " }}
+                {% else %}
                     -
-                {% endfor %}
+                {% endif %}
             </td>
 
-            <!-- FORM UBAH ROLE (MULTI ROLE) -->
+            <!-- FORM UBAH ROLE -->
             <td>
-                <form
-                    method="post"
-                    action="{% url 'superadmin:update_user_role' user.id %}"
-                >
+                <form method="post"
+                      action="{% url 'superadmin:update_user_role' user.user.id %}">
                     {% csrf_token %}
 
                     <label>
-                        <input type="checkbox" name="roles"
-                               value="SUPERADMIN"
-                               {% if 'SUPERADMIN' in user.groups.values_list 'name' %}checked{% endif %}>
+                        <input type="checkbox" name="roles" value="SUPERADMIN"
+                               {% if 'SUPERADMIN' in user.roles %}checked{% endif %}>
                         SUPERADMIN
                     </label><br>
 
                     <label>
-                        <input type="checkbox" name="roles"
-                               value="ADMIN"
-                               {% if 'ADMIN' in user.groups.values_list 'name' %}checked{% endif %}>
+                        <input type="checkbox" name="roles" value="ADMIN"
+                               {% if 'ADMIN' in user.roles %}checked{% endif %}>
                         ADMIN
                     </label><br>
 
                     <label>
-                        <input type="checkbox" name="roles"
-                               value="PANITIA"
-                               {% if 'PANITIA' in user.groups.values_list 'name' %}checked{% endif %}>
+                        <input type="checkbox" name="roles" value="PANITIA"
+                               {% if 'PANITIA' in user.roles %}checked{% endif %}>
                         PANITIA
                     </label><br>
 
                     <label>
-                        <input type="checkbox" name="roles"
-                               value="BENDAHARA"
-                               {% if 'BENDAHARA' in user.groups.values_list 'name' %}checked{% endif %}>
+                        <input type="checkbox" name="roles" value="BENDAHARA"
+                               {% if 'BENDAHARA' in user.roles %}checked{% endif %}>
                         BENDAHARA
                     </label><br>
 
-                    <button type="submit">
-                        Simpan Role
-                    </button>
+                    <button type="submit">Simpan Role</button>
                 </form>
             </td>
 
-            <!-- TOGGLE AKTIF / NONAKTIF -->
+            <!-- TOGGLE AKTIF -->
             <td>
-                {% if user != request.user %}
-                    <form
-                        method="post"
-                        action="{% url 'superadmin:toggle_user_active' user.id %}"
-                        style="display:inline;"
-                    >
+                {% if user.user != request.user %}
+                    <form method="post"
+                          action="{% url 'superadmin:toggle_user_active' user.user.id %}"
+                          style="display:inline;">
                         {% csrf_token %}
-                        {% if user.is_active %}
-                            <button type="submit">
+                        <button type="submit">
+                            {% if user.user.is_active %}
                                 Nonaktifkan
-                            </button>
-                        {% else %}
-                            <button type="submit">
+                            {% else %}
                                 Aktifkan
-                            </button>
-                        {% endif %}
+                            {% endif %}
+                        </button>
                     </form>
                 {% else %}
                     <em>(akun sendiri)</em>

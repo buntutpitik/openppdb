@@ -1,6 +1,7 @@
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from .rekap_asal_sekolah import rekap_asal_sekolah
+from .export_rekap_asal_sekolah import export_rekap_asal_sekolah_excel
 from . import views
 
 urlpatterns = [
@@ -81,6 +82,12 @@ urlpatterns = [
         "admin/rekap-asal-sekolah/",
         rekap_asal_sekolah,
         name="rekap_asal_sekolah"
+    ),
+
+    path(
+        "admin/rekap-asal-sekolah/export/",
+        export_rekap_asal_sekolah_excel,
+        name="export_rekap_asal_sekolah_excel"
     ),
     
     
